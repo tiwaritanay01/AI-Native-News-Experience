@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.local
+.vscode/
+dist/
+build/
+*.log
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
