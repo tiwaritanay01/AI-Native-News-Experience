@@ -1,29 +1,23 @@
-from sklearn.cluster import KMeans
-import numpy as np
-from app.db.vector_db import collection
+from app.services.story_cluster import cluster_stories
+from app.services.briefing_service import generate_story_briefing
 
-def detect_story_of_day():
 
-    results = collection.get(include=["embeddings","documents"])
+def detect_story_of_the_day():
 
-    embeddings = results["embeddings"]
-    docs = results["documents"]
+    clusters = cluster_stories()
 
-    kmeans = KMeans(n_clusters=5)
+    if not clusters:
+        return {"error": "No stories available"}
 
-    labels = kmeans.fit_predict(embeddings)
+    # Find cluster with most articles
+    largest_cluster_id = max(clusters, key=lambda cid: len(clusters[cid]))
 
-    cluster_counts = {}
+    articles = clusters[largest_cluster_id]
 
-    for label in labels:
-        cluster_counts[label] = cluster_counts.get(label,0)+1
+    briefing = generate_story_briefing(articles)
 
-    biggest_cluster = max(cluster_counts, key=cluster_counts.get)
-
-    story = []
-
-    for i,label in enumerate(labels):
-        if label == biggest_cluster:
-            story.append(docs[i])
-
-    return story[:5]
+    return {
+        "cluster_id": largest_cluster_id,
+        "articles": len(articles),
+        "briefing": briefing
+    }
