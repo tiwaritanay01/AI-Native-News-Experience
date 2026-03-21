@@ -15,9 +15,14 @@ from app.agents.debate_agent import (
     end_debate,
     ask_debate_question
 )
+from app.agents.impact_agent import get_story_impact
+from app.agents.timeline_agent.timeline_agent import generate_story_timeline
+from app.agents.sentiment_agent import get_story_sentiment
+from app.api.story_routes import router as story_router
  
 
 app = FastAPI()
+app.include_router(story_router)
 
 @app.get("/story_of_day")
 def story_of_day():
@@ -85,3 +90,26 @@ def story_opinions(cluster_id: int):
 @app.post("/debate/{session_id}/ask")
 def debate_question(session_id: str, question: str):
     return ask_debate_question(session_id, question)
+
+@app.get("/story/{cluster_id}/impact")
+def story_impact(cluster_id: int):
+
+    return get_story_impact(cluster_id)
+
+@app.get("/story/{cluster_id}/timeline")
+def story_timeline(cluster_id: int):
+
+   return generate_story_timeline(cluster_id)
+
+@app.get("/story/{cluster_id}/sentiment")
+def story_sentiment(cluster_id: int):
+
+    return get_story_sentiment(cluster_id)
+
+# @app.get("/story/{cluster_id}/dashboard")
+# def story_dashboard(cluster_id: int):
+#     return generate_dashboard(cluster_id)
+
+@app.get("/")
+def home():
+    return {"message": "AI Native News API Running"}
