@@ -3,7 +3,6 @@ from app.services.story_title import generate_story_title
 from app.services.entity_extractor import extract_entities
 from app.services.impact_analysis import analyze_impact
 
-
 def get_all_stories():
 
     clusters = cluster_stories()
@@ -16,8 +15,9 @@ def get_all_stories():
         entities = extract_entities(articles)
         impact = analyze_impact(articles)
 
+
         story = {
-            "cluster_id": cid,
+            "cluster_id": int(cid),
             "title": title,
             "articles": len(articles),
             "entities": entities[:5],
