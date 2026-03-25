@@ -24,3 +24,5 @@ watchfiles
 websocket-client
 websockets
 zipp
+feedparser
+ollama
