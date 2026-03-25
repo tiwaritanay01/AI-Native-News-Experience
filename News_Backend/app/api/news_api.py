@@ -24,10 +24,7 @@ app = FastAPI()
 # CORS CONFIG
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:4200",
-        "http://127.0.0.1:4200"
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,6 +35,7 @@ app.add_middleware(
 app.include_router(story_router)
 
 
+@app.get("/story-of-day")
 @app.get("/story_of_day")
 def story_of_day():
     return get_story_of_the_day()
