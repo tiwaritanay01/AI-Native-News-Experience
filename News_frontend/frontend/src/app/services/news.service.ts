@@ -1,5 +1,5 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { of, Observable } from 'rxjs';
 
@@ -8,8 +8,11 @@ import { of, Observable } from 'rxjs';
 })
 export class NewsService {
 
-  // api = "http://localhost:8000";
   private api = 'https://hypernatural-phoebe-blowy.ngrok-free.dev';
+  
+  private headers = new HttpHeaders({
+    'ngrok-skip-browser-warning': 'true'
+  });
 
   constructor(
     private http: HttpClient,
@@ -22,57 +25,57 @@ export class NewsService {
 
   getStories(): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/stories`);
+    return this.http.get<any>(`${this.api}/stories`, { headers: this.headers });
   }
 
   getStoryOfDay(): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story-of-day`);
+    return this.http.get<any>(`${this.api}/story-of-day`, { headers: this.headers });
   }
 
   getDashboard(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story/${clusterId}/dashboard`);
+    return this.http.get<any>(`${this.api}/story/${clusterId}/dashboard`, { headers: this.headers });
   }
 
   getImpact(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story/${clusterId}/impact`);
+    return this.http.get<any>(`${this.api}/story/${clusterId}/impact`, { headers: this.headers });
   }
 
   getTimeline(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story/${clusterId}/timeline`);
+    return this.http.get<any>(`${this.api}/story/${clusterId}/timeline`, { headers: this.headers });
   }
 
   getOpinions(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story/${clusterId}/opinions`);
+    return this.http.get<any>(`${this.api}/story/${clusterId}/opinions`, { headers: this.headers });
   }
 
   getTopStory(): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story-of-day`);
+    return this.http.get<any>(`${this.api}/story-of-day`, { headers: this.headers });
   }
 
   getBriefing(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story/${clusterId}/briefing`);
+    return this.http.get<any>(`${this.api}/story/${clusterId}/briefing`, { headers: this.headers });
   }
 
   getSentiment(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story/${clusterId}/sentiment`);
+    return this.http.get<any>(`${this.api}/story/${clusterId}/sentiment`, { headers: this.headers });
   }
 
   getQuestions(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/story/${clusterId}/questions`);
+    return this.http.get<any>(`${this.api}/story/${clusterId}/questions`, { headers: this.headers });
   }
 
   getRelatedNews(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/stories`);
+    return this.http.get<any>(`${this.api}/stories`, { headers: this.headers });
   }
 
-}
+}
