@@ -5,6 +5,10 @@ from app.services.story_detector import detect_story_of_the_day
 
 app = FastAPI()
 
+@app.get("/")
+def home():
+    return {"status": "success", "message": "AI-Native News Backend is Online"}
+
 @app.get("/ingest")
 def ingest_news():
     articles = fetch_business_news()
