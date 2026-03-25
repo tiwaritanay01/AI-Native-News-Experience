@@ -1,0 +1,82 @@
+// import { Component, input, inject } from '@angular/core';
+// import { CommonModule } from '@angular/common';
+// import { NewsStory } from '../../models/news.model';
+// import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component';
+// import { DashboardStateService } from '../../services/dashboard-state.service';
+
+// @Component({
+//   selector: 'app-why-matters-card',
+//   standalone: true,
+//   imports: [CommonModule, SkeletonLoaderComponent],
+//   template: `
+//     <div
+//       class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 overflow-hidden group hover:border-emerald-500/50 transition-all duration-300">
+//       <!-- Hover glow -->
+//       <div
+//         class="absolute -inset-1 bg-gradient-to-r from-emerald-600 via-emerald-500 to-cyan-500 opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500 -z-10">
+//       </div>
+
+//       <div class="relative z-10 space-y-4">
+//         <div>
+//           <h3 class="text-sm font-semibold text-emerald-400 tracking-widest uppercase mb-4">
+//             Why This Matters To You
+//           </h3>
+//         </div>
+
+//         @if (stateService.loading()) {
+//           <app-skeleton-loader [lines]="3"></app-skeleton-loader>
+//         } @else if (story(); as topStory) {
+//           <div class="space-y-3">
+//             @for (i of [0, 1, 2]; track i) {
+//               <div class="flex gap-3 p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-all duration-200">
+//                 <div class="flex-shrink-0 rounded-full bg-emerald-500 mt-2" style="width: 8px; height: 8px;"></div>
+//                 <div class="flex-1">
+//                   <p class="text-sm text-slate-100">
+//                     {{ getRelevantPoint(topStory, i) }}
+//                   </p>
+//                 </div>
+//               </div>
+//             }
+//           </div>
+//         }
+//       </div>
+//     </div>
+//   `
+// })
+// export class WhyMattersCardComponent {
+//   stateService = inject(DashboardStateService);
+//   story = input.required<NewsStory | null>();
+
+//   getRelevantPoint(story: NewsStory, index: number): string {
+//     const points = [
+//       `${story.affectedCompanies[0]?.name || 'Key companies'} directly impacted by this news`,
+//       `Your portfolio alignment: ${story.impact === 'bullish' ? 'Positive exposure' : story.impact === 'bearish' ? 'Risk exposure' : 'Neutral position'}`,
+//       `Sector impact on ${story.affectedCompanies[0]?.sector || 'Technology'}: Monitor for follow-up developments`
+//     ];
+//     return points[index];
+//   }
+// }
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector:'app-why-matters-card',
+  standalone:true,
+  imports:[CommonModule],
+  template:`
+
+  <div class="card">
+
+    <h3>Why This Matters To You</h3>
+
+    <p>{{relevance}}</p>
+
+  </div>
+
+  `
+})
+export class WhyMattersCardComponent{
+
+  @Input() relevance:any;
+
+}
