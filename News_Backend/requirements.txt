@@ -1,57 +1,39 @@
+# ─── Core Framework ───────────────────────────────────
 fastapi
 uvicorn
 pyngrok
 nest-asyncio
-sentence-transformers
-transformers
-pandas
-scikit-learn
-requests
-python-dotenv
-chromadb
-uvloop
-huggingface_hub
-gitpython
-orjson
 pydantic
 pydantic-settings
-PyYAML
-tenacity
-tqdm
+orjson
+
+# ─── AI / ML (Hybrid: works on TPU, GPU, and CPU) ────
+transformers
 torch
-typer
-watchfiles
-websocket-client
-websockets
-zipp
-feedparser
-ollama
-jax
-jaxlib
-flax
+accelerate
+sentence-transformers
+huggingface_hub
+
+# ─── Data & Clustering ───────────────────────────────
+chromadb
 hdbscan
 numpy
 scikit-learn
-sentence-transformers
-transformers
-chromadb
-uvicorn
-fastapi
-pyngrok
+pandas
+
+# ─── Utilities ────────────────────────────────────────
 requests
 python-dotenv
-uvloop
-huggingface_hub
-gitpython
-orjson
-pydantic
-pydantic-settings
+feedparser
 PyYAML
 tenacity
 tqdm
-torch
-typer
-watchfiles
-websocket-client
-websockets
+gitpython
 zipp
+
+# ─── NOTE: Hardware-specific packages ─────────────────
+# These are installed conditionally in the Colab script:
+#   TPU: jax[tpu], torch_xla
+#   GPU: (torch with CUDA is auto-detected)
+#   Neither is needed in requirements.txt since Colab
+#   handles the runtime-specific installs.

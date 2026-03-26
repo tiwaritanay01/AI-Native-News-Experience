@@ -1,6 +1,4 @@
-import requests
-
-OLLAMA_URL = "http://localhost:11434/api/generate"
+from app.services.llm_service import generate_llm_response
 
 
 def generate_story_brief(text):
@@ -15,14 +13,4 @@ Summarize this news story and provide:
 News:
 {text}
 """
-
-    response = requests.post(
-        OLLAMA_URL,
-        json={
-            "model": "llama3",
-            "prompt": prompt,
-            "stream": False
-        }
-    )
-
-    return response.json()["response"]
+    return generate_llm_response(prompt)
