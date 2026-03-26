@@ -4,7 +4,7 @@ from typing import Dict, Any
 # We remove 'requests' as we avoid calling the offline Ollama service
 from app.services.tpu_service import stream_jax_inference
 
-def generate_ai_response(prompt: str, model: str = "llama3") -> str:
+def generate_llm_response(prompt: str, model: str = "llama3") -> str:
     """
     Refactored to use native JAX/TPU inference instead of Ollama.
     This fixes the 'Connection Refused' error in Colab.
