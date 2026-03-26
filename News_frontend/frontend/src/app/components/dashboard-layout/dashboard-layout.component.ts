@@ -149,7 +149,12 @@ export class DashboardLayoutComponent implements OnInit {
     this.streamer.streamAgentResponse(this.clusterId, 'Generate a real-time news briefing.')
       .subscribe({
         next: (chunk) => {
-          this.dashboard.briefingStream += chunk;
+          console.log('📡 TPU Token:', chunk);
+          if (chunk === '[START]') {
+            this.dashboard.briefingStream = '';
+          } else {
+            this.dashboard.briefingStream += chunk;
+          }
         },
         error: (err) => {
           this.error = "TPU Access Denied / JAX Initialization Failed.";
