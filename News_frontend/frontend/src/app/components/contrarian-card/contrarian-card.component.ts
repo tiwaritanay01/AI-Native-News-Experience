@@ -1,59 +1,3 @@
-// import { Component, input, inject } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { NewsStory } from '../../models/news.model';
-// import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component';
-// import { DashboardStateService } from '../../services/dashboard-state.service';
-
-// @Component({
-//   selector: 'app-contrarian-card',
-//   standalone: true,
-//   imports: [CommonModule, SkeletonLoaderComponent],
-//   template: `
-//     <div
-//       class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 overflow-hidden group hover:border-violet-500/50 transition-all duration-300">
-//       <!-- Hover glow -->
-//       <div
-//         class="absolute -inset-1 bg-gradient-to-r from-violet-600 via-violet-500 to-purple-500 opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500 -z-10">
-//       </div>
-
-//       <div class="relative z-10 space-y-4">
-//         <h3 class="text-sm font-semibold text-violet-400 tracking-widest uppercase">
-//           Contrarian Perspective
-//         </h3>
-
-//         @if (stateService.loading()) {
-//           <app-skeleton-loader [lines]="4"></app-skeleton-loader>
-//         } @else if (story(); as topStory) {
-//           <div class="grid grid-cols-2 gap-4 h-full">
-//             <!-- Bullish View -->
-//             <div
-//               class="bg-gradient-to-br from-emerald-900/30 to-emerald-800/20 border border-emerald-700/50 rounded-lg p-4 hover:border-emerald-500/50 transition-all duration-200">
-//               <div class="flex items-center gap-2 mb-3">
-//                 <div class="rounded-full bg-emerald-500" style="width: 8px; height: 8px;"></div>
-//                 <h4 class="text-sm font-semibold text-emerald-400 uppercase tracking-wide">Bullish</h4>
-//               </div>
-//               <p class="text-xs text-slate-300 leading-relaxed">{{ topStory.bullishView }}</p>
-//             </div>
-
-//             <!-- Bearish View -->
-//             <div
-//               class="bg-gradient-to-br from-rose-900/30 to-rose-800/20 border border-rose-700/50 rounded-lg p-4 hover:border-rose-500/50 transition-all duration-200">
-//               <div class="flex items-center gap-2 mb-3">
-//                 <div class="rounded-full bg-rose-500" style="width: 8px; height: 8px;"></div>
-//                 <h4 class="text-sm font-semibold text-rose-400 uppercase tracking-wide">Bearish</h4>
-//               </div>
-//               <p class="text-xs text-slate-300 leading-relaxed">{{ topStory.bearishView }}</p>
-//             </div>
-//           </div>
-//         }
-//       </div>
-//     </div>
-//   `
-// })
-// export class ContrarianceCardComponent {
-//   stateService = inject(DashboardStateService);
-//   story = input.required<NewsStory | null>();
-// }
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -62,21 +6,62 @@ import { CommonModule } from '@angular/common';
   standalone:true,
   imports:[CommonModule],
   template:`
+  <div *ngIf="opinions && !opinions.loading && !opinions.error">
+    <h3 class="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">Contrarian Opinions</h3>
 
-  <div class="card">
-
-    <h3>Contrarian Opinions</h3>
-
-    <div *ngFor="let opinion of opinions">
-      <p>{{opinion}}</p>
+    <!-- Handle array of opinions -->
+    <div *ngIf="isArray(opinions)" class="space-y-2">
+      <div *ngFor="let opinion of opinions" class="flex gap-3 p-3 rounded-lg bg-slate-700/30">
+        <div class="flex-shrink-0 rounded-full bg-orange-500 mt-2" style="width: 8px; height: 8px;"></div>
+        <p class="text-xs text-slate-300">{{ opinion }}</p>
+      </div>
     </div>
 
+    <!-- Handle string response -->
+    <div *ngIf="isString(opinions)" class="p-3 rounded-lg bg-slate-700/30">
+      <p class="text-xs text-slate-300 whitespace-pre-wrap">{{ opinions }}</p>
+    </div>
+
+    <!-- Handle object response -->
+    <div *ngIf="!isArray(opinions) && !isString(opinions)" class="space-y-2">
+      <div class="p-3 rounded-lg bg-slate-700/30">
+        <p class="text-xs text-slate-300 whitespace-pre-wrap">{{ getOpinionText() }}</p>
+      </div>
+    </div>
   </div>
 
+  <div *ngIf="opinions?.loading" class="flex items-center justify-center h-full">
+    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+    <span class="text-xs text-slate-500 ml-2">Computing sentiment...</span>
+  </div>
+
+  <div *ngIf="opinions?.error" class="text-rose-400 text-sm">
+    ⚠️ {{ opinions.error }}
+  </div>
   `
 })
-export class ContrarianCardComponent{
+export class ContrarianCardComponent {
+  @Input() opinions: any;
 
-  @Input() opinions:any[]=[];
+  isArray(val: any): boolean {
+    return Array.isArray(val);
+  }
 
+  isString(val: any): boolean {
+    return typeof val === 'string';
+  }
+
+  getOpinionText(): string {
+    if (!this.opinions) return '';
+    if (this.opinions.contrarian_views) return this.opinions.contrarian_views;
+    if (this.opinions.opinions) {
+      if (typeof this.opinions.opinions === 'string') return this.opinions.opinions;
+      if (Array.isArray(this.opinions.opinions)) return this.opinions.opinions.join('\n');
+    }
+    if (this.opinions.raw) return this.opinions.raw;
+    if (this.opinions.summary) return this.opinions.summary;
+    // Fallback: stringify the data
+    const { loading, error, ...data } = this.opinions;
+    return JSON.stringify(data, null, 2);
+  }
 }
