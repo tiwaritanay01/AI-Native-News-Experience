@@ -59,14 +59,18 @@ import { AgentStreamingService } from '../../services/agent-streaming.service';
 
             <!-- Why Matters Card (Streams Briefing) -->
             <div class="relative min-h-[250px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-4">
-                <div *ngIf="!dashboard?.briefing && loading" class="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-20">
+                <!-- Overlay disappears once the first stream chunks arrive -->
+                <div *ngIf="!dashboard?.briefingStream && loading" class="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-20">
                    <div class="text-center">
                       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
                       <p class="text-xs text-slate-500">TPU Connection Established...</p>
                    </div>
                 </div>
-                <!-- Pass the streaming text to the component -->
-                <app-why-matters-card [relevance]="{summary: dashboard?.briefingStream}"></app-why-matters-card>
+                <!-- Pass the streaming text and generation state to the component -->
+                <app-why-matters-card 
+                  [relevance]="dashboard?.briefing || {summary: dashboard?.briefingStream}" 
+                  [isGenerating]="loading">
+                </app-why-matters-card>
             </div>
 
             <!-- Impact Radar Card (Lazy Loaded) -->

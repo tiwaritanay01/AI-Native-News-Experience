@@ -98,6 +98,8 @@ export class WhyMattersCardComponent {
   getDisplayBriefing(): string {
     if (!this.relevance) return 'Waiting for TPU core...';
     if (typeof this.relevance === 'string') return this.relevance;
-    return this.relevance.summary || 'Decoding stream...';
+    const summary = this.relevance.summary || '';
+    if (summary === '' && this.isGenerating) return 'Initializing JAX Engine...';
+    return summary || 'Decoding stream...';
   }
 }
