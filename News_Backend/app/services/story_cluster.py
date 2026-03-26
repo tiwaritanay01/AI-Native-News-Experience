@@ -72,7 +72,12 @@ import numpy as np
 import hdbscan
 
 
+_cluster_cache = None
+
 def cluster_stories():
+    global _cluster_cache
+    if _cluster_cache is not None:
+        return _cluster_cache
 
     results = collection.get(
         include=["documents", "embeddings"]
@@ -103,4 +108,9 @@ def cluster_stories():
 
         clusters.setdefault(label, []).append(docs[i])
 
+    _cluster_cache = clusters
     return clusters
+
+def clear_cluster_cache():
+    global _cluster_cache
+    _cluster_cache = None

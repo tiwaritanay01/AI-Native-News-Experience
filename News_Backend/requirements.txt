@@ -26,3 +26,8 @@ websockets
 zipp
 feedparser
 ollama
+jax
+jaxlib
+flax
+optimum-tpu
+# torch-xla for TPU v5e-1

@@ -1,27 +1,32 @@
 from app.db.vector_db import collection
-from app.services.embeddings import generate_embedding
+from app.services.embeddings import model
+from app.services.story_cluster import clear_cluster_cache
 
 def store_articles(articles):
-    for i, article in enumerate(articles):
-        # Use .get() to avoid KeyErrors if fields are missing
-        content = article.get("content", article.get("description", "No content available"))
-        title = article.get("title", "No Title")
-        url = article.get("url", "")
-        
-        # Safely handle the 'source' field which is often a dict
+    if not articles:
+        return
+
+    contents = [article.get("content", article.get("description", "No content available")) for article in articles]
+    embeddings = model.encode(contents).tolist()
+    
+    ids = [str(i) for i in range(len(articles))]
+    
+    metadatas = []
+    for article in articles:
         source_data = article.get("source", {})
         source_name = source_data.get("name", "Unknown Source") if isinstance(source_data, dict) else str(source_data)
-        
-        # Generate embedding for the content
-        embedding = generate_embedding(content)
+        metadatas.append({
+            "title": article.get("title", "No Title"),
+            "source": source_name,
+            "url": article.get("url", "")
+        })
 
-        collection.add(
-            ids=[str(i)],
-            documents=[content],
-            embeddings=[embedding],
-            metadatas=[{
-                "title": title,
-                "source": source_name,
-                "url": url
-            }]
-        )
+    collection.add(
+        ids=ids,
+        documents=contents,
+        embeddings=embeddings,
+        metadatas=metadatas
+    )
+    
+    # Invalidate cluster cache as data changed
+    clear_cluster_cache()

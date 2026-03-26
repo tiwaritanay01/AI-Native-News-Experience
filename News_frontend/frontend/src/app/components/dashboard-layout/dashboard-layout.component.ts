@@ -9,6 +9,7 @@ import { ContrarianCardComponent } from '../contrarian-card/contrarian-card.comp
 import { StoryArcComponent } from '../story-arc/story-arc.component';
 import { DashboardStateService } from '../../services/dashboard-state.service';
 import { NewsService } from '../../services/news.service';
+import { AgentStreamingService } from '../../services/agent-streaming.service';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -36,13 +37,13 @@ import { NewsService } from '../../services/news.service';
             <div class="flex justify-between items-center text-white">
               <div>
                 <h1 class="text-3xl font-bold mb-2">AI-Native News Experience</h1>
-                <p class="text-slate-400">Loading AI Insights Sequentialy to Protect Hardware...</p>
+                <p class="text-slate-400">Streaming Real-Time TPU Insights (JAX-Accelerated)</p>
               </div>
               <div class="text-right text-slate-400 text-sm">
                 <div>{{ getCurrentTime() }}</div>
                 <div class="flex items-center gap-2 justify-end mt-1">
                   <span class="w-2 h-2 rounded-full" [class.bg-blue-500]="loading" [class.bg-emerald-500]="!loading && !error"></span>
-                  {{ loading ? 'Agents Processing...' : 'Analysis Ready' }}
+                  {{ loading ? 'TPU Core Generating...' : 'Analysis Ready' }}
                 </div>
               </div>
             </div>
@@ -56,47 +57,45 @@ import { NewsService } from '../../services/news.service';
                <app-hero-card></app-hero-card>
             </div>
 
-            <!-- Why Matters Card (Loads after Basic Info) -->
+            <!-- Why Matters Card (Streams Briefing) -->
             <div class="relative min-h-[250px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-4">
                 <div *ngIf="!dashboard?.briefing && loading" class="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-20">
                    <div class="text-center">
                       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                      <p class="text-xs text-slate-500">Generating Briefing...</p>
+                      <p class="text-xs text-slate-500">TPU Connection Established...</p>
                    </div>
                 </div>
-                <app-why-matters-card [relevance]="dashboard?.briefing"></app-why-matters-card>
+                <!-- Pass the streaming text to the component -->
+                <app-why-matters-card [relevance]="{summary: dashboard?.briefingStream}"></app-why-matters-card>
             </div>
 
-            <!-- Impact Radar Card (Sequentially Loaded) -->
-            <div class="lg:col-span-2 relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-4">
-                 <div *ngIf="!dashboard?.impact && loading" class="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-20">
-                   <div class="text-center">
-                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mx-auto mb-2"></div>
-                      <p class="text-xs text-slate-500">Decoding Market Impact...</p>
-                   </div>
-                </div>
-                <app-impact-radar-card [impact]="dashboard?.impact"></app-impact-radar-card>
+            <!-- Impact Radar Card (Lazy Loaded) -->
+            <div class="lg:col-span-2 relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-6">
+                 <div *ngIf="!dashboard?.impact" class="absolute inset-0 flex items-center justify-center bg-slate-900/40 z-10 backdrop-blur-sm">
+                    <button (click)="loadImpact()" class="px-6 py-2 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-full hover:bg-emerald-500/30 transition-all font-medium">
+                       Analyze Market Impact
+                    </button>
+                 </div>
+                 <app-impact-radar-card [impact]="dashboard?.impact"></app-impact-radar-card>
             </div>
 
-            <!-- Contrarian Card (Sequentially Loaded) -->
-            <div class="relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-4">
-                 <div *ngIf="!dashboard?.opinions && loading" class="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-20">
-                   <div class="text-center">
-                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-2"></div>
-                      <p class="text-xs text-slate-500">Analyzing Bull/Bear Views...</p>
-                   </div>
-                </div>
-                <app-contrarian-card [opinions]="dashboard?.opinions"></app-contrarian-card>
+            <!-- Contrarian Card (Lazy Loaded) -->
+            <div class="relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-6">
+                 <div *ngIf="!dashboard?.opinions" class="absolute inset-0 flex items-center justify-center bg-slate-900/40 z-10 backdrop-blur-sm">
+                    <button (click)="loadOpinions()" class="px-6 py-2 bg-orange-500/20 border border-orange-500/40 text-orange-400 rounded-full hover:bg-orange-500/30 transition-all font-medium">
+                       Compute Bull/Bear Sentiment
+                    </button>
+                 </div>
+                 <app-contrarian-card [opinions]="dashboard?.opinions"></app-contrarian-card>
             </div>
             
-            <!-- Story Arc (Sequentially Loaded) -->
-            <div class="lg:col-span-3 relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-4">
-                <div *ngIf="!dashboard?.timeline && loading" class="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-20">
-                   <div class="text-center">
-                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-2"></div>
-                      <p class="text-xs text-slate-500">Tracing Story Arc...</p>
-                   </div>
-                </div>
+            <!-- Story Arc (Lazy Loaded) -->
+            <div class="lg:col-span-3 relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-6">
+                <div *ngIf="!dashboard?.timeline" class="absolute inset-0 flex items-center justify-center bg-slate-900/40 z-10 backdrop-blur-sm">
+                    <button (click)="loadTimeline()" class="px-6 py-2 bg-purple-500/20 border border-purple-500/40 text-purple-400 rounded-full hover:bg-purple-500/30 transition-all font-medium">
+                       Trace Story Arc Timeline
+                    </button>
+                 </div>
                 <app-story-arc [timeline]="dashboard?.timeline"></app-story-arc>
             </div>
 
@@ -104,8 +103,8 @@ import { NewsService } from '../../services/news.service';
 
           <!-- Error Feedback -->
           <div *ngIf="error" class="mt-8 p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm">
-             ⚠️ <b>Sequence Throttled:</b> {{ error }}
-             <button (click)="retry()" class="underline ml-2">Resume Next Agent</button>
+             ⚠️ <b>Streaming Error:</b> {{ error }}
+             <button (click)="initiateStreamingBriefing()" class="underline ml-2">Reconnect to TPU Core</button>
           </div>
 
         </div>
@@ -117,11 +116,13 @@ import { NewsService } from '../../services/news.service';
 export class DashboardLayoutComponent implements OnInit {
   route = inject(ActivatedRoute);
   news = inject(NewsService);
+  streamer = inject(AgentStreamingService);
   stateService = inject(DashboardStateService);
 
   clusterId!: number;
   dashboard: any = {
       briefing: null,
+      briefingStream: '',
       impact: null,
       opinions: null,
       timeline: null
@@ -137,42 +138,51 @@ export class DashboardLayoutComponent implements OnInit {
 
   ngOnInit() {
     this.clusterId = Number(this.route.snapshot.paramMap.get('id') || 0);
-    this.startSequentialLoading();
+    this.initiateStreamingBriefing();
   }
 
-  async startSequentialLoading() {
+  initiateStreamingBriefing() {
     this.loading = true;
     this.error = null;
+    this.dashboard.briefingStream = '';
 
-    try {
-      // Step 1: Loading Briefing (First Priority)
-      const briefingRes = await this.news.getBriefing(this.clusterId).toPromise();
-      this.dashboard.briefing = briefingRes;
-      
-      // Step 2: Market Impact (Second Priority) - wait a moment for CPU
-      await new Promise(r => setTimeout(r, 1500));
-      const impactRes = await this.news.getImpact(this.clusterId).toPromise();
-      this.dashboard.impact = impactRes;
+    this.streamer.streamAgentResponse(this.clusterId, 'Generate a real-time news briefing.')
+      .subscribe({
+        next: (chunk) => {
+          this.dashboard.briefingStream += chunk;
+        },
+        error: (err) => {
+          this.error = "TPU Access Denied / JAX Initialization Failed.";
+          console.error("Agent Streaming Failed:", err);
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
+          this.dashboard.briefing = { summary: this.dashboard.briefingStream };
+        }
+      });
+  }
 
-      // Step 3: Contrarian Opinions
-      await new Promise(r => setTimeout(r, 1500));
-      const opinionsRes = await this.news.getOpinions(this.clusterId).toPromise();
-      this.dashboard.opinions = opinionsRes;
+  async loadImpact() {
+    // Lazy load logic: Triggered on user action
+    this.dashboard.impact = { loading: true };
+    const res = await this.news.getImpact(this.clusterId).toPromise();
+    this.dashboard.impact = res;
+  }
 
-      // Step 4: Story Arc Timeline
-      await new Promise(r => setTimeout(r, 1500));
-      const timelineRes = await this.news.getTimeline(this.clusterId).toPromise();
-      this.dashboard.timeline = timelineRes;
+  async loadOpinions() {
+    this.dashboard.opinions = { loading: true };
+    const res = await this.news.getOpinions(this.clusterId).toPromise();
+    this.dashboard.opinions = res;
+  }
 
-    } catch (err) {
-      this.error = "Hardware Protection Initiated / AI Connection Issue.";
-      console.error("AI Sequential Load Failed:", err);
-    } finally {
-      this.loading = false;
-    }
+  async loadTimeline() {
+    this.dashboard.timeline = { loading: true };
+    const res = await this.news.getTimeline(this.clusterId).toPromise();
+    this.dashboard.timeline = res;
   }
 
   retry() {
-    this.startSequentialLoading();
+    this.initiateStreamingBriefing();
   }
 }

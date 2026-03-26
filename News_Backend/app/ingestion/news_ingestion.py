@@ -31,22 +31,24 @@ def fetch_business_news():
 
 
 def store_articles(articles):
+    if not articles:
+        return
 
-    for i, article in enumerate(articles):
+    texts = [article["title"] + " " + article.get("content", "") for article in articles]
+    embeddings = model.encode(texts).tolist()
 
-        text = article["title"] + " " + article["content"]
+    ids = [str(i) for i in range(len(articles))]
+    metadatas = [{
+        "url": article["url"],
+        "published": article.get("published", "")
+    } for article in articles]
 
-        embedding = model.encode(text).tolist()
-
-        collection.add(
-            ids=[str(i)],
-            embeddings=[embedding],
-            documents=[text],
-            metadatas=[{
-                "url": article["url"],
-                "published": article["published"]   # NEW METADATA
-            }]
-        )
+    collection.add(
+        ids=ids,
+        embeddings=embeddings,
+        documents=texts,
+        metadatas=metadatas
+    )
 
 
 news = fetch_business_news()
