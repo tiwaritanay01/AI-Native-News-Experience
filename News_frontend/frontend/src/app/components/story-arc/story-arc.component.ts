@@ -48,9 +48,9 @@ export class StoryArcComponent {
     if (Array.isArray(this.timeline)) return this.timeline;
     if (this.timeline.timeline) {
       if (Array.isArray(this.timeline.timeline)) return this.timeline.timeline;
-      if (typeof this.timeline.timeline === 'string') return this.timeline.timeline.split('\n').filter(s => s.trim());
+      if (typeof this.timeline.timeline === 'string') return this.timeline.timeline.split('\n').filter((s: string) => s.trim());
     }
-    if (typeof this.timeline === 'string') return this.timeline.split('\n').filter(s => s.trim());
+    if (typeof this.timeline === 'string') return this.timeline.split('\n').filter((s: string) => s.trim());
     return [];
   }
 }

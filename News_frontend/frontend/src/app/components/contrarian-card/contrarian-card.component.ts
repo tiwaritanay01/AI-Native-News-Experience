@@ -62,7 +62,7 @@ export class ContrarianCardComponent {
     if (Array.isArray(this.opinions)) return this.opinions;
     if (this.opinions.opinions && Array.isArray(this.opinions.opinions)) return this.opinions.opinions;
     if (this.opinions.contrarian_views && Array.isArray(this.opinions.contrarian_views)) return this.opinions.contrarian_views;
-    if (typeof this.opinions === 'string') return this.opinions.split('\n').filter(s => s.trim());
+    if (typeof this.opinions === 'string') return this.opinions.split('\n').filter((s: string) => s.trim());
     return [];
   }
 }
