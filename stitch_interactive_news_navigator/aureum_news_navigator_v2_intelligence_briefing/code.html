@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aureum Terminal v2 - News Navigator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Space+Grotesk:wght@300..700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #131313;
+            color: #e2e2e2;
+            overflow: hidden;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0e0e0e;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4d4635;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #f2ca50;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-error-container": "#ffdad6",
+                "outline": "#99907c",
+                "outline-variant": "#4d4635",
+                "background": "#131313",
+                "on-secondary-container": "#007117",
+                "primary-fixed": "#ffe088",
+                "inverse-surface": "#e2e2e2",
+                "on-secondary": "#003907",
+                "surface-container-low": "#1b1b1b",
+                "surface-container-highest": "#353535",
+                "on-background": "#e2e2e2",
+                "surface-tint": "#e9c349",
+                "on-surface-variant": "#d0c5af",
+                "secondary-container": "#13ff43",
+                "on-error": "#690005",
+                "surface-variant": "#353535",
+                "inverse-primary": "#735c00",
+                "on-tertiary-container": "#90000c",
+                "on-primary": "#3c2f00",
+                "inverse-on-surface": "#303030",
+                "surface-container": "#1f1f1f",
+                "primary": "#f2ca50",
+                "on-tertiary": "#690006",
+                "primary-fixed-dim": "#e9c349",
+                "on-secondary-fixed-variant": "#00530e",
+                "secondary-fixed-dim": "#00e639",
+                "tertiary-fixed-dim": "#ffb4ab",
+                "tertiary-container": "#ff968b",
+                "primary-container": "#d4af37",
+                "surface-bright": "#393939",
+                "error": "#ffb4ab",
+                "surface-container-high": "#2a2a2a",
+                "surface-container-lowest": "#0e0e0e",
+                "error-container": "#93000a",
+                "surface-dim": "#131313",
+                "on-surface": "#e2e2e2",
+                "on-primary-fixed-variant": "#574500",
+                "secondary": "#ecffe3",
+                "on-primary-container": "#554300",
+                "tertiary-fixed": "#ffdad6",
+                "on-primary-fixed": "#241a00",
+                "tertiary": "#ffbfb8",
+                "secondary-fixed": "#72ff70",
+                "on-secondary-fixed": "#002203",
+                "on-tertiary-fixed": "#410002",
+                "on-tertiary-fixed-variant": "#93000c",
+                "surface": "#131313"
+              },
+              fontFamily: {
+                "headline": ["Newsreader"],
+                "body": ["Space Grotesk"],
+                "label": ["Space Grotesk"],
+                "mono": ["Space Mono"]
+              },
+              borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+            },
+          },
+        }
+      </script>
+</head>
+<body class="font-body selection:bg-primary/30 selection:text-primary">
+<!-- SideNavBar (Rail) -->
+<aside class="fixed left-0 top-0 h-full z-50 bg-[#0E0E0E] text-[#F2CA50] w-20 flex flex-col border-r border-[#D4AF37]/20">
+<div class="h-14 flex items-center justify-center border-b border-[#D4AF37]/20">
+<span class="font-['Newsreader'] italic text-xl text-[#F2CA50]">A.</span>
+</div>
+<nav class="flex-1 py-4 flex flex-col items-center gap-6">
+<!-- Dashboard (Inactive) -->
+<button class="flex flex-col items-center gap-1 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors w-full py-2">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Space_Grotesk'] text-[0.6rem] tracking-[0.05rem] uppercase">Dashboard</span>
+</button>
+<!-- News Navigator (Active) -->
+<button class="flex flex-col items-center gap-1 text-[#F2CA50] border-l-2 border-[#F2CA50] bg-[#D4AF37]/5 w-full py-2">
+<span class="material-symbols-outlined" data-icon="vertical_split">vertical_split</span>
+<span class="font-['Space_Grotesk'] text-[0.6rem] tracking-[0.05rem] uppercase">Navigator</span>
+</button>
+<!-- Video Studio (Inactive) -->
+<button class="flex flex-col items-center gap-1 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors w-full py-2">
+<span class="material-symbols-outlined" data-icon="video_library">video_library</span>
+<span class="font-['Space_Grotesk'] text-[0.6rem] tracking-[0.05rem] uppercase">Studio</span>
+</button>
+<!-- Story Arc (Inactive) -->
+<button class="flex flex-col items-center gap-1 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors w-full py-2">
+<span class="material-symbols-outlined" data-icon="auto_graph">auto_graph</span>
+<span class="font-['Space_Grotesk'] text-[0.6rem] tracking-[0.05rem] uppercase">Arcs</span>
+</button>
+<!-- Vernacular Engine (Inactive) -->
+<button class="flex flex-col items-center gap-1 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors w-full py-2">
+<span class="material-symbols-outlined" data-icon="translate">translate</span>
+<span class="font-['Space_Grotesk'] text-[0.6rem] tracking-[0.05rem] uppercase">Engine</span>
+</button>
+</nav>
+<div class="pb-6 flex flex-col items-center gap-4">
+<span class="material-symbols-outlined text-[#D4AF37]/40 hover:text-primary cursor-pointer">settings</span>
+<div class="w-8 h-8 bg-primary/20 flex items-center justify-center">
+<span class="text-[0.6rem] font-bold">JD</span>
+</div>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-40 h-14 bg-[#131313]/80 backdrop-blur-xl border-b border-[#D4AF37]/15 flex justify-between items-center pl-24 pr-6">
+<div class="flex items-center gap-8">
+<h1 class="font-['Newsreader'] text-2xl italic text-[#F2CA50]">Aureum Terminal <span class="text-xs not-italic opacity-50 ml-2 font-mono">v2.0</span></h1>
+<div class="hidden md:flex items-center bg-surface-container-low px-3 py-1 gap-2 border border-outline-variant/20">
+<span class="material-symbols-outlined text-sm opacity-50" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-xs font-mono w-64 placeholder:opacity-30" placeholder="Command Search..." type="text"/>
+<span class="text-[0.6rem] opacity-30 font-mono">⌘K</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[#F2CA50]" data-icon="notifications">notifications</span></button>
+<button class="p-2 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[#F2CA50]" data-icon="settings">settings</span></button>
+<button class="p-2 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[#F2CA50]" data-icon="account_circle">account_circle</span></button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="pl-20 flex h-[calc(100vh-3.5rem-2rem)]">
+<!-- Left: Deep Briefing (65%) -->
+<section class="w-[65%] h-full overflow-y-auto custom-scrollbar bg-surface border-r border-outline-variant/10">
+<div class="max-w-4xl mx-auto px-12 py-10">
+<div class="flex items-center gap-3 mb-6">
+<span class="bg-primary/10 text-primary text-[0.65rem] font-mono px-2 py-0.5 tracking-widest border border-primary/20 uppercase">Intelligence Briefing</span>
+<span class="text-outline text-[0.65rem] font-mono">DATE: 20OCT2024.1432</span>
+<span class="text-outline text-[0.65rem] font-mono">SOURCE: MULTI-SYNTH_V4</span>
+</div>
+<h2 class="font-headline text-5xl font-bold text-primary mb-8 leading-tight">Global Trade Realignment: The Decentralized Corridor Initiative</h2>
+<div class="grid grid-cols-3 gap-6 mb-12 py-6 border-y border-outline-variant/20">
+<div class="flex flex-col">
+<span class="text-[0.65rem] font-mono text-outline uppercase mb-1">Impact Velocity</span>
+<span class="font-mono text-lg text-secondary-fixed-dim flex items-center gap-1">ACCELERATING <span class="material-symbols-outlined text-sm">trending_up</span></span>
+</div>
+<div class="flex flex-col">
+<span class="text-[0.65rem] font-mono text-outline uppercase mb-1">Fiscal Exposure</span>
+<span class="font-mono text-lg text-primary">$4.2T EST.</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[0.65rem] font-mono text-outline uppercase mb-1">Risk Quotient</span>
+<span class="font-mono text-lg text-tertiary-fixed-dim uppercase">High Volatility</span>
+</div>
+</div>
+<div class="prose prose-invert max-w-none">
+<p class="font-headline text-xl italic text-on-surface-variant leading-relaxed mb-8">
+                        The emergence of the "Decentralized Corridor" marks a fundamental departure from the post-Bretton Woods era. As traditional maritime routes face increased geopolitical friction, synthetic trade nodes are materializing across Eurasia and the Global South.
+                    </p>
+<div class="space-y-12">
+<section>
+<h3 class="font-mono text-sm font-bold text-primary uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+<span class="w-1 h-4 bg-primary"></span> 01. Structural Synthesis
+                            </h3>
+<div class="font-headline text-lg leading-relaxed space-y-4">
+<p>Analysts are tracking a 22% increase in non-dollar-denominated bilateral agreements within the last fiscal quarter. This shift is not merely currency diversification; it represents a total architectural re-routing of value chains.</p>
+<div class="bg-surface-container-low p-6 my-6">
+<h4 class="font-mono text-[0.7rem] text-primary uppercase mb-4">Key Data Points</h4>
+<div class="space-y-4">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary text-sm mt-1">add_circle</span>
+<div>
+<p class="text-sm font-bold text-on-surface mb-1 uppercase tracking-wider">Logistics Arbitrage</p>
+<p class="text-sm opacity-60">Northern Sea Route transits up 140% YOY, cutting delivery latency by 12 days for critical rare-earth shipments.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary text-sm mt-1">add_circle</span>
+<div>
+<p class="text-sm font-bold text-on-surface mb-1 uppercase tracking-wider">Currency Elasticity</p>
+<p class="text-sm opacity-60">New BRICS+ clearing house mechanisms successfully processed $450B in energy contracts, bypassing SWIFT protocols entirely.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h3 class="font-mono text-sm font-bold text-primary uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+<span class="w-1 h-4 bg-primary"></span> 02. Market Implications
+                            </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container px-5 py-4 flex flex-col justify-between">
+<span class="text-[0.65rem] font-mono text-outline uppercase">Maritime Insurance Index</span>
+<div class="mt-4 flex items-end justify-between">
+<span class="font-mono text-3xl font-bold">+18.4%</span>
+<span class="text-tertiary-fixed-dim flex items-center font-mono text-xs">COST SPIKE <span class="material-symbols-outlined ml-1">arrow_upward</span></span>
+</div>
+</div>
+<div class="bg-surface-container px-5 py-4 flex flex-col justify-between">
+<span class="text-[0.65rem] font-mono text-outline uppercase">Regional Logistics ETF</span>
+<div class="mt-4 flex items-end justify-between">
+<span class="font-mono text-3xl font-bold">+12.2%</span>
+<span class="text-secondary-fixed-dim flex items-center font-mono text-xs">ALPHA GEN <span class="material-symbols-outlined ml-1">trending_up</span></span>
+</div>
+</div>
+</div>
+</section>
+<img alt="Logistics Terminal" class="w-full grayscale brightness-50 contrast-125 mb-8" data-alt="Dusk shot of a hyper-modern automated cargo port with glowing orange crane lights and dark deep blue water reflections, professional cinematography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6OSQ_GAr7etuZnN6BUaVfOExKD27HuJxdfhANf7iU_yXdpir11O2FufTuZKEbeuM7rzsMlEzgxKR8nwO1l_F_A-s73YfZchyehIGTgjVnBUlNrd6l_oVKcAUrC0QPWD0EtGGs-rqskMuZSZ_zBX9bg-NvU5M-a4FjXpehgjRaCm4ROE7mF0j4ZROinqmdaJkRN5OgDutimYZk2Rt930exH9GiE0T_IA1L4mU628g6M23Jzs5KPn9QEBVfx3czytRZX8MWQba_ww"/>
+<p class="font-headline text-lg leading-relaxed">
+                            Conclusion: The terminal recommendation for aggressive portfolios is to hedge against traditional shipping conglomerates while scaling exposure into automated port tech and regional currency hedge funds. The sovereign analyst must prioritize flow over static asset value in the coming 24 months.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Right: AI Co-Pilot Terminal (35%) -->
+<section class="w-[35%] flex flex-col bg-surface-container-lowest">
+<!-- Terminal Header -->
+<div class="h-12 flex items-center justify-between px-6 border-b border-outline-variant/20 bg-surface">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-container"></div>
+<span class="font-mono text-xs uppercase tracking-widest text-primary">Aureum_CoPilot_v4.02</span>
+</div>
+<span class="font-mono text-[0.65rem] opacity-40">LATENCY: 14ms</span>
+</div>
+<!-- Chat History -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 font-mono text-xs">
+<div class="flex gap-4">
+<span class="text-primary font-bold">[SYSTEM]</span>
+<p class="text-on-surface opacity-80 leading-relaxed">Deep Briefing loaded. Analysis of "Global Trade Realignment" complete. I can provide granular data on specific shipping lanes, fiscal impacts, or regulatory shifts. How shall we proceed?</p>
+</div>
+<div class="flex gap-4">
+<span class="text-outline font-bold">[USER]</span>
+<p class="text-on-surface">Summarize the tech impact on Suez Canal bypass routes.</p>
+</div>
+<div class="bg-surface-container p-4 border-l-2 border-primary">
+<div class="flex gap-4 mb-2">
+<span class="text-primary font-bold">[AI_ANALYSIS]</span>
+<p class="text-on-surface">Tech integration is primary driver for bypass viability:</p>
+</div>
+<ul class="ml-12 space-y-2 opacity-80 list-disc">
+<li>AI-driven ice-routing optimization (NSR)</li>
+<li>Automated customs clearing via blockchain nodes</li>
+<li>High-speed rail synchronization with autonomous trucking fleets in central Asia</li>
+</ul>
+</div>
+<!-- Simulation of typing -->
+<div class="flex gap-4">
+<span class="text-primary font-bold animate-pulse">_</span>
+</div>
+</div>
+<!-- Suggested Actions -->
+<div class="p-4 bg-surface border-t border-outline-variant/20">
+<div class="flex flex-wrap gap-2 mb-4">
+<button class="px-3 py-1.5 border border-outline-variant/30 text-[0.65rem] font-mono hover:border-primary hover:text-primary transition-colors uppercase">Analyze tech impact</button>
+<button class="px-3 py-1.5 border border-outline-variant/30 text-[0.65rem] font-mono hover:border-primary hover:text-primary transition-colors uppercase">Compare with 2023 budget</button>
+<button class="px-3 py-1.5 border border-outline-variant/30 text-[0.65rem] font-mono hover:border-primary hover:text-primary transition-colors uppercase">Export Data Sheet</button>
+</div>
+<!-- Terminal Input -->
+<div class="relative flex items-center bg-surface-container-low border border-outline-variant/50 p-3">
+<span class="text-primary font-mono mr-2">&gt;</span>
+<input class="w-full bg-transparent border-none focus:ring-0 font-mono text-sm placeholder:opacity-30 p-0" placeholder="Ask follow-up questions..." type="text"/>
+<button class="ml-2 text-primary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Ticker) -->
+<footer class="fixed bottom-0 left-0 w-full h-8 bg-[#0E0E0E]/90 backdrop-blur-md border-t border-[#D4AF37]/20 z-50 flex items-center overflow-hidden">
+<div class="flex whitespace-nowrap animate-marquee-slow py-1">
+<div class="flex items-center gap-8 px-4">
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">S&amp;P 500</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#13FF41]">5,815.12 +0.42%</span>
+<span class="material-symbols-outlined text-[#13FF41] text-xs">trending_up</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">NASDAQ</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#13FF41]">18,342.98 +0.88%</span>
+<span class="material-symbols-outlined text-[#13FF41] text-xs">trending_up</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">BTC/USD</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#FF968B]">67,241.05 -1.24%</span>
+<span class="material-symbols-outlined text-[#FF968B] text-xs">trending_down</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">GOLD</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#13FF41]">2,721.40 +0.15%</span>
+<span class="material-symbols-outlined text-[#13FF41] text-xs">trending_up</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">OIL_WTI</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#FF968B]">70.42 -2.10%</span>
+<span class="material-symbols-outlined text-[#FF968B] text-xs">trending_down</span>
+</div>
+</div>
+<!-- Duplicated for seamless loop -->
+<div class="flex items-center gap-8 px-4">
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">S&amp;P 500</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#13FF41]">5,815.12 +0.42%</span>
+<span class="material-symbols-outlined text-[#13FF41] text-xs">trending_up</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">NASDAQ</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#13FF41]">18,342.98 +0.88%</span>
+<span class="material-symbols-outlined text-[#13FF41] text-xs">trending_up</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">BTC/USD</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#FF968B]">67,241.05 -1.24%</span>
+<span class="material-symbols-outlined text-[#FF968B] text-xs">trending_down</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] text-on-surface/50 uppercase">GOLD</span>
+<span class="font-['Space_Mono'] text-[0.65rem] text-[#13FF41]">2,721.40 +0.15%</span>
+<span class="material-symbols-outlined text-[#13FF41] text-xs">trending_up</span>
+</div>
+</div>
+</div>
+</footer>
+<style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee-slow {
+            animation: marquee 40s linear infinite;
+        }
+    </style>
+</body></html>

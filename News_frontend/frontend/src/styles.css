@@ -1,38 +1,112 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
+
+@theme {
+  /* Color Palette - Aureum Terminal v2 (JSON Derived) */
+  --color-primary: #f2ca50;
+  --color-primary-container: #d4af37;
+  --color-on-primary: #3c2f00;
+
+  --color-secondary: #ecffe3;
+  --color-secondary-container: #13ff43;
+  --color-on-secondary: #003907;
+
+  --color-tertiary: #ffbfb8;
+  --color-tertiary-container: #ff968b;
+  --color-on-tertiary: #690006;
+
+  --color-background: #131313;
+  --color-on-background: #e2e2e2;
+
+  --color-surface: #131313;
+  --color-on-surface: #e2e2e2;
+  --color-on-surface-variant: #d0c5af;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-low: #1b1b1b;
+  --color-surface-container: #1f1f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353535;
+
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+
+  --color-outline: #99907c;
+  --color-outline-variant: #4d4635;
+
+  /* Typography */
+  --font-headline: "Newsreader", serif;
+  --font-body: "Space Grotesk", sans-serif;
+  --font-label: "Space Grotesk", sans-serif;
+  --font-mono: "Space Mono", monospace;
+
+  /* Border Radius - Retro Square Aesthetic */
+  --radius-default: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-full: 9999px;
+}
 
 /* Global element styles */
 * {
-  transition-property: color, background-color, border-color;
-  transition-duration: 200ms;
+  transition-property: color, background-color, border-color, opacity, transform;
+  transition-duration: 250ms;
 }
 
-html {
+html, body {
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-body);
   scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
 }
 
-/* Custom scrollbar */
+/* Glassmorphism Card Effect */
+.glass-card {
+  background: rgba(19, 19, 19, 0.6);
+  backdrop-filter: blur(20px);
+}
+
+/* Custom Scrollbar - Aureum Aesthetic */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: rgb(15, 23, 42);
+  background-color: var(--color-surface-container-lowest);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(51, 65, 85);
-  border-radius: 4px;
+  background-color: var(--color-primary-container);
+  border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(71, 85, 99);
+  background-color: var(--color-primary);
 }
 
 /* Text selection */
 ::selection {
-  background-color: rgb(37, 99, 235);
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
 }
+
+/* Material Icons setting (from design file) */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: 20px;
+}
+
+/* Animations */
+@keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.ticker-animate {
+    display: flex;
+    animation: ticker 30s linear infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }

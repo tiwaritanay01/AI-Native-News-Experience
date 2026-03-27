@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aureum Terminal v2 - Story Arc</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Space+Grotesk:wght@300..700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-error-container": "#ffdad6",
+              "outline": "#99907c",
+              "outline-variant": "#4d4635",
+              "background": "#131313",
+              "on-secondary-container": "#007117",
+              "primary-fixed": "#ffe088",
+              "inverse-surface": "#e2e2e2",
+              "on-secondary": "#003907",
+              "surface-container-low": "#1b1b1b",
+              "surface-container-highest": "#353535",
+              "on-background": "#e2e2e2",
+              "surface-tint": "#e9c349",
+              "on-surface-variant": "#d0c5af",
+              "secondary-container": "#13ff43",
+              "on-error": "#690005",
+              "surface-variant": "#353535",
+              "inverse-primary": "#735c00",
+              "on-tertiary-container": "#90000c",
+              "on-primary": "#3c2f00",
+              "inverse-on-surface": "#303030",
+              "surface-container": "#1f1f1f",
+              "primary": "#f2ca50",
+              "on-tertiary": "#690006",
+              "primary-fixed-dim": "#e9c349",
+              "on-secondary-fixed-variant": "#00530e",
+              "secondary-fixed-dim": "#00e639",
+              "tertiary-fixed-dim": "#ffb4ab",
+              "tertiary-container": "#ff968b",
+              "primary-container": "#d4af37",
+              "surface-bright": "#393939",
+              "error": "#ffb4ab",
+              "surface-container-high": "#2a2a2a",
+              "surface-container-lowest": "#0e0e0e",
+              "error-container": "#93000a",
+              "surface-dim": "#131313",
+              "on-surface": "#e2e2e2",
+              "on-primary-fixed-variant": "#574500",
+              "secondary": "#ecffe3",
+              "on-primary-container": "#554300",
+              "tertiary-fixed": "#ffdad6",
+              "on-primary-fixed": "#241a00",
+              "tertiary": "#ffbfb8",
+              "secondary-fixed": "#72ff70",
+              "on-secondary-fixed": "#002203",
+              "on-tertiary-fixed": "#410002",
+              "on-tertiary-fixed-variant": "#93000c",
+              "surface": "#131313"
+            },
+            fontFamily: {
+              "headline": ["Newsreader", "serif"],
+              "body": ["Space Grotesk", "sans-serif"],
+              "label": ["Space Grotesk", "sans-serif"],
+              "mono": ["Space Mono", "monospace"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #131313;
+            color: #e2e2e2;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0e0e0e; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; }
+    </style>
+</head>
+<body class="font-body selection:bg-primary-container/30">
+<!-- SIDE NAV RAIL -->
+<aside class="fixed left-0 top-0 h-full z-50 bg-[#0E0E0E] text-[#F2CA50] w-20 flex flex-col border-r border-[#D4AF37]/20">
+<div class="h-14 flex items-center justify-center border-b border-[#D4AF37]/15">
+<span class="font-['Newsreader'] italic text-xl text-[#F2CA50]">A</span>
+</div>
+<nav class="flex-1 flex flex-col items-center py-6 gap-8">
+<div class="group flex flex-col items-center gap-1 cursor-pointer text-[#D4AF37]/40 hover:text-[#F2CA50] transition-colors">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">Dashboard</span>
+</div>
+<div class="group flex flex-col items-center gap-1 cursor-pointer text-[#D4AF37]/40 hover:text-[#F2CA50] transition-colors">
+<span class="material-symbols-outlined">vertical_split</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">News</span>
+</div>
+<div class="group flex flex-col items-center gap-1 cursor-pointer text-[#D4AF37]/40 hover:text-[#F2CA50] transition-colors">
+<span class="material-symbols-outlined">video_library</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">Video</span>
+</div>
+<!-- ACTIVE TAB: Story Arc -->
+<div class="group flex flex-col items-center gap-1 cursor-pointer text-[#F2CA50] border-l-2 border-[#F2CA50] bg-[#D4AF37]/5 w-full py-2">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">Story Arc</span>
+</div>
+<div class="group flex flex-col items-center gap-1 cursor-pointer text-[#D4AF37]/40 hover:text-[#F2CA50] transition-colors">
+<span class="material-symbols-outlined">translate</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">Engine</span>
+</div>
+</nav>
+<div class="pb-6 flex flex-col items-center gap-4">
+<span class="material-symbols-outlined text-[#D4AF37]/40">settings</span>
+<div class="w-8 h-8 bg-surface-container border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+</div>
+</aside>
+<!-- TOP APP BAR -->
+<header class="sticky top-0 w-full z-40 flex justify-between items-center px-6 h-14 bg-[#131313]/80 backdrop-blur-xl border-b border-[#D4AF37]/15 ml-20">
+<div class="flex items-center gap-8">
+<span class="font-['Newsreader'] text-2xl italic text-[#F2CA50]">Aureum Terminal</span>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="bg-surface-container-low border-none focus:ring-1 focus:ring-primary text-xs w-64 pl-9 py-1.5 placeholder:text-outline/50 uppercase tracking-widest font-label" placeholder="Search Global Intelligence..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-[#D4AF37]/60 hover:text-[#F2CA50] cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-[#D4AF37]/60 hover:text-[#F2CA50] cursor-pointer">settings</span>
+<span class="material-symbols-outlined text-[#D4AF37]/60 hover:text-[#F2CA50] cursor-pointer">account_circle</span>
+</div>
+</div>
+</header>
+<main class="ml-20 min-h-screen pb-20 grid grid-cols-12 gap-0">
+<!-- MAIN CONTENT: STORY TRACKER -->
+<section class="col-span-8 border-r border-outline-variant/20 bg-surface">
+<!-- STICKY STORY HEADER -->
+<div class="sticky top-14 z-30 bg-surface/95 backdrop-blur-md px-10 py-8 border-b border-outline-variant/10">
+<div class="flex items-center gap-3 mb-2">
+<span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] uppercase font-mono tracking-tighter border border-primary/20">Active Analysis</span>
+<span class="text-outline/40 font-mono text-[10px] tracking-widest">TSX: TECH_CYCLE_012</span>
+</div>
+<h1 class="font-headline text-5xl font-bold text-on-surface leading-tight tracking-tight">The Semi-Conductor Supercycle</h1>
+<p class="font-body text-outline mt-3 max-w-2xl text-lg leading-relaxed italic">Tracking the geopolitical shifts, manufacturing bottleneck resolutions, and the AI-driven demand surge defining the next decade of silicon dominance.</p>
+</div>
+<!-- TIMELINE SECTION -->
+<div class="px-10 py-12 relative">
+<!-- Vertical Line -->
+<div class="absolute left-[3.25rem] top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-outline-variant/20 to-transparent"></div>
+<div class="space-y-16">
+<!-- Timeline Node 1 -->
+<div class="relative pl-20 group">
+<div class="absolute left-10 top-2 w-6 h-6 bg-surface border-2 border-secondary-container rounded-full flex items-center justify-center z-10">
+<div class="w-2 h-2 bg-secondary-container rounded-full animate-pulse"></div>
+</div>
+<div class="bg-surface-container-low border-l-4 border-secondary-container p-6 hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-xs text-secondary-container tracking-tighter">OCT 24, 2024 • 09:15 EST</span>
+<span class="material-symbols-outlined text-secondary-container text-lg" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+<h3 class="font-headline text-2xl font-semibold mb-3">Foundry Yield Optimization Peak</h3>
+<p class="text-on-surface-variant leading-relaxed text-sm">Taiwanese fabrication centers report a 14% yield increase on 2nm processes, effectively ending the medium-term supply constraint for enterprise-grade AI accelerators.</p>
+<div class="mt-4 pt-4 border-t border-outline-variant/10 flex gap-4">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-mono text-outline">Market Impact</span>
+<span class="text-secondary-container font-mono font-bold">+$4.2B ARR EST.</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant/20 pl-4">
+<span class="text-[10px] uppercase font-mono text-outline">Sentiment Score</span>
+<span class="text-on-surface font-mono font-bold">0.89 (High)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Timeline Node 2 -->
+<div class="relative pl-20 group">
+<div class="absolute left-10 top-2 w-6 h-6 bg-surface border-2 border-primary-container rounded-full flex items-center justify-center z-10">
+<div class="w-2 h-2 bg-primary-container rounded-full"></div>
+</div>
+<div class="bg-surface-container-low border-l-4 border-primary-container p-6 hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-xs text-primary-container tracking-tighter">OCT 18, 2024 • 14:30 GMT</span>
+<span class="material-symbols-outlined text-primary-container text-lg">public</span>
+</div>
+<h3 class="font-headline text-2xl font-semibold mb-3">EU Chips Act: Phase III Deployment</h3>
+<p class="text-on-surface-variant leading-relaxed text-sm">Strategic autonomy initiative triggers €12B in localized R&amp;D grants focusing on neuromorphic computing architectures. Diversification of supply chains gains momentum.</p>
+<img class="w-full h-48 object-cover mt-6 opacity-80 grayscale hover:grayscale-0 transition-all duration-500" data-alt="ultra-modern clean room manufacturing facility with blue glowing lights and robotic arms processing silicon wafers" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdW41slm43fHO9tViQ-tMi-AhcusZqZVPLxwkZY5SJt0iBu6Xk7evoN0T0dPDQWjxJHhSPUWuVOXCmHyqAXEat7zFV6DOGF6W3mzarrJNdF5piV9ZbyK7QU1qjFJRrBB1EJ_iB8xfE0xomgPOpFuKC_3cz2d7KNJaBfb4rb0ixRS2uEKRqqoUr2Y6XaOJW8V7-f1B332ztvTfMzqDWJiQKtP-UBFdD5jgy5DyiUlqhXZc_KoOOZl604_seXPpj9yKXoeyqy8xNmg"/>
+</div>
+</div>
+<!-- Timeline Node 3 -->
+<div class="relative pl-20 group">
+<div class="absolute left-10 top-2 w-6 h-6 bg-surface border-2 border-tertiary-container rounded-full flex items-center justify-center z-10">
+<div class="w-2 h-2 bg-tertiary-container rounded-full"></div>
+</div>
+<div class="bg-surface-container-low border-l-4 border-tertiary-container p-6 hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-xs text-tertiary-container tracking-tighter">OCT 12, 2024 • 22:00 JST</span>
+<span class="material-symbols-outlined text-tertiary-container text-lg" style="font-variation-settings: 'FILL' 1;">trending_down</span>
+</div>
+<h3 class="font-headline text-2xl font-semibold mb-3">Rare Earth Export Restriction Alert</h3>
+<p class="text-on-surface-variant leading-relaxed text-sm">New regulatory frameworks in Southeast Asia threaten the logistics of precursor chemicals used in photolithography. 18% increase in futures pricing recorded.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SIDEBAR: ANALYSIS & METRICS -->
+<aside class="col-span-4 bg-surface-container-lowest flex flex-col p-6 gap-8">
+<!-- SENTIMENT SHIFT -->
+<div class="space-y-4">
+<h4 class="font-label text-xs uppercase tracking-[0.2em] text-outline flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary-container"></span>
+                    Sentiment Shift
+                </h4>
+<div class="bg-surface p-4 border border-outline-variant/10 aspect-[4/3] relative overflow-hidden">
+<!-- Mock Line Chart -->
+<svg class="w-full h-full" viewbox="0 0 400 200">
+<path d="M0 180 Q 50 170, 100 130 T 200 150 T 300 60 T 400 20" fill="none" stroke="#13FF41" stroke-width="2"></path>
+<path d="M0 180 Q 50 170, 100 130 T 200 150 T 300 60 T 400 20 V 200 H 0 Z" fill="url(#grad)" opacity="0.1"></path>
+<defs>
+<lineargradient id="grad" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#13FF41;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#13FF41;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid Lines -->
+<line opacity="0.3" stroke="#4d4635" stroke-dasharray="2,4" x1="0" x2="400" y1="50" y2="50"></line>
+<line opacity="0.3" stroke="#4d4635" stroke-dasharray="2,4" x1="0" x2="400" y1="100" y2="100"></line>
+<line opacity="0.3" stroke="#4d4635" stroke-dasharray="2,4" x1="0" x2="400" y1="150" y2="150"></line>
+</svg>
+<div class="absolute bottom-4 right-4 flex flex-col items-end">
+<span class="font-mono text-3xl font-bold text-secondary-container">+14.2%</span>
+<span class="font-mono text-[10px] text-outline">WEEK-OVER-WEEK GROWTH</span>
+</div>
+</div>
+</div>
+<!-- KEY PLAYERS -->
+<div class="space-y-4">
+<h4 class="font-label text-xs uppercase tracking-[0.2em] text-outline">Key Players</h4>
+<div class="space-y-2">
+<div class="bg-surface-container-low p-3 flex items-center gap-4 border border-transparent hover:border-primary/20 transition-all cursor-pointer">
+<div class="w-10 h-10 bg-surface border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional executive headshot of a middle-aged tech CEO in a charcoal suit against a minimal dark office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG3ElejabV-500tupJZMWoM0xP3lEsufYPfiZWOkba9dSxH3M9wPq5LkQ1m-j-ZGfXsizvwsQGjWTE-nOG4fVWH01qJa7RUmTsbvQrI9KdU_MaW_wyk8MMJfcNX5hUD8bqkdSiyDGjUW04i7rY2PAYPQbP9G9N9CHYZJqXqxCxhZ8rr6VsdtHdf1Opcki7qO2Vamul8TVuk6fthW3yblLw0C2le-X0IqbMVb5cSo0xYnetfAWo9631nBPKh6_A1JGS712OeMDXWQ"/>
+</div>
+<div class="flex-1">
+<div class="text-sm font-bold text-on-surface">Dr. Jensen Wei</div>
+<div class="text-[10px] text-primary uppercase font-mono tracking-tighter">CEO • SILICON DYNASTIES</div>
+</div>
+<span class="material-symbols-outlined text-outline text-sm">open_in_new</span>
+</div>
+<div class="bg-surface-container-low p-3 flex items-center gap-4 border border-transparent hover:border-primary/20 transition-all cursor-pointer">
+<div class="w-10 h-10 bg-surface border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional female corporate leader in business attire with focused expression in high-end financial district setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQit8Ax2jeu9CgyW1UmynMXeEX708U_ZW2L2uDNocpST1Ru3tx9snx5fh4MkTd5kYxLdirGYKzUFmUHQfvKou-Xq7JsoUonSnbI47c3HVA7cnxQCt1rujhMOTxpThAiPOxKU4iYOiW_fHxneLNMosft7xkCX1EpIlVc2Bd70vlXaSrc7RVWE0z8QOEXgu09C86MucVAeWFr7j5FvORrXZoYGA5V4ZCtLqp2O4BKlWk-FlMtSw0Qnj7COtKEKm2bu_SRn9oHrjJag"/>
+</div>
+<div class="flex-1">
+<div class="text-sm font-bold text-on-surface">Elena Kovic</div>
+<div class="text-[10px] text-primary uppercase font-mono tracking-tighter">CHAIR • EU CHIPS ALLIANCE</div>
+</div>
+<span class="material-symbols-outlined text-outline text-sm">open_in_new</span>
+</div>
+<div class="bg-surface-container-low p-3 flex items-center gap-4 border border-transparent hover:border-primary/20 transition-all cursor-pointer">
+<div class="w-10 h-10 bg-surface border border-outline-variant overflow-hidden">
+<div class="w-full h-full flex items-center justify-center bg-primary-container/10">
+<span class="material-symbols-outlined text-primary">corporate_fare</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="text-sm font-bold text-on-surface">T-CORE Foundries</div>
+<div class="text-[10px] text-primary uppercase font-mono tracking-tighter">INFRASTRUCTURE • TAIWAN</div>
+</div>
+<span class="material-symbols-outlined text-outline text-sm">open_in_new</span>
+</div>
+</div>
+</div>
+<!-- PREDICTIVE ANALYSIS -->
+<div class="bg-primary/5 border border-primary/20 p-6 space-y-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h4 class="font-headline text-lg italic font-bold text-primary">Predictive Analysis</h4>
+</div>
+<div class="space-y-4">
+<div class="border-l-2 border-primary pl-4">
+<span class="text-[10px] uppercase font-mono text-outline block mb-1">High Probability Event</span>
+<p class="text-sm text-on-surface leading-tight font-bold">Q4 Consolidation of Tier-2 Suppliers</p>
+</div>
+<div class="pt-2 border-t border-outline-variant/10">
+<h5 class="text-[10px] uppercase font-mono text-primary mb-3">What to Watch Next</h5>
+<ul class="space-y-2">
+<li class="flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="text-primary mt-0.5">01</span>
+<span>Quarterly earnings for ASML exposure levels.</span>
+</li>
+<li class="flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="text-primary mt-0.5">02</span>
+<span>Bilateral trade agreements regarding German neon supply.</span>
+</li>
+<li class="flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="text-primary mt-0.5">03</span>
+<span>Patent filings for carbon nanotube commercialization.</span>
+</li>
+</ul>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary font-mono text-xs font-bold uppercase tracking-widest hover:bg-primary-container transition-colors">
+                        Generate Full Report
+                    </button>
+</div>
+</div>
+</aside>
+</main>
+<!-- TICKER BAR (BottomNavBar) -->
+<footer class="fixed bottom-0 left-0 w-full z-50 h-8 bg-[#0E0E0E]/90 backdrop-blur-md border-t border-[#D4AF37]/20 flex items-center overflow-hidden whitespace-nowrap">
+<div class="flex items-center gap-12 animate-marquee-slow px-4">
+<div class="flex items-center gap-2">
+<span class="font-mono text-[10px] text-outline">S&amp;P 500</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-mono text-xs text-[#13FF41] tracking-tighter">5,782.12 (+0.42%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-[10px] text-outline">NASDAQ</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-mono text-xs text-[#13FF41] tracking-tighter">18,214.50 (+1.12%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-[10px] text-outline">BTC/USD</span>
+<span class="material-symbols-outlined text-xs text-[#FF968B]">trending_down</span>
+<span class="font-mono text-xs text-[#FF968B] tracking-tighter">62,142.10 (-0.85%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-[10px] text-outline">GOLD</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-mono text-xs text-[#13FF41] tracking-tighter">2,684.50 (+0.12%)</span>
+</div>
+<!-- Repeat for loop effect -->
+<div class="flex items-center gap-2">
+<span class="font-mono text-[10px] text-outline">S&amp;P 500</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-mono text-xs text-[#13FF41] tracking-tighter">5,782.12 (+0.42%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-[10px] text-outline">NASDAQ</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-mono text-xs text-[#13FF41] tracking-tighter">18,214.50 (+1.12%)</span>
+</div>
+</div>
+</footer>
+<style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee-slow {
+            animation: marquee 30s linear infinite;
+        }
+    </style>
+</body></html>

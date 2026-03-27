@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aureum Terminal v2 | Vernacular Engine</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Space+Grotesk:wght@300..700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-error-container": "#ffdad6",
+              "outline": "#99907c",
+              "outline-variant": "#4d4635",
+              "background": "#131313",
+              "on-secondary-container": "#007117",
+              "primary-fixed": "#ffe088",
+              "inverse-surface": "#e2e2e2",
+              "on-secondary": "#003907",
+              "surface-container-low": "#1b1b1b",
+              "surface-container-highest": "#353535",
+              "on-background": "#e2e2e2",
+              "surface-tint": "#e9c349",
+              "on-surface-variant": "#d0c5af",
+              "secondary-container": "#13ff43",
+              "on-error": "#690005",
+              "surface-variant": "#353535",
+              "inverse-primary": "#735c00",
+              "on-tertiary-container": "#90000c",
+              "on-primary": "#3c2f00",
+              "inverse-on-surface": "#303030",
+              "surface-container": "#1f1f1f",
+              "primary": "#f2ca50",
+              "on-tertiary": "#690006",
+              "primary-fixed-dim": "#e9c349",
+              "on-secondary-fixed-variant": "#00530e",
+              "secondary-fixed-dim": "#00e639",
+              "tertiary-fixed-dim": "#ffb4ab",
+              "tertiary-container": "#ff968b",
+              "primary-container": "#d4af37",
+              "surface-bright": "#393939",
+              "error": "#ffb4ab",
+              "surface-container-high": "#2a2a2a",
+              "surface-container-lowest": "#0e0e0e",
+              "error-container": "#93000a",
+              "surface-dim": "#131313",
+              "on-surface": "#e2e2e2",
+              "on-primary-fixed-variant": "#574500",
+              "secondary": "#ecffe3",
+              "on-primary-container": "#554300",
+              "tertiary-fixed": "#ffdad6",
+              "on-primary-fixed": "#241a00",
+              "tertiary": "#ffbfb8",
+              "secondary-fixed": "#72ff70",
+              "on-secondary-fixed": "#002203",
+              "on-tertiary-fixed": "#410002",
+              "on-tertiary-fixed-variant": "#93000c",
+              "surface": "#131313"
+            },
+            fontFamily: {
+              "headline": ["Newsreader"],
+              "body": ["Space Grotesk"],
+              "label": ["Space Grotesk"],
+              "mono": ["Space Mono"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { background-color: #131313; color: #e2e2e2; font-family: 'Space Grotesk', sans-serif; }
+        .mask-fade { mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
+        input[type="range"]::-webkit-slider-runnable-track { background: #4d4635; height: 2px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; background: #f2ca50; margin-top: -5px; }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar (Rail) -->
+<aside class="fixed left-0 top-0 h-full z-50 bg-[#0E0E0E] h-screen w-20 flex flex-col border-r border-[#D4AF37]/20">
+<div class="flex flex-col items-center py-6 gap-8">
+<span class="font-['Newsreader'] italic text-xl text-[#F2CA50]">A</span>
+<nav class="flex flex-col gap-6 w-full">
+<button class="flex flex-col items-center gap-1 w-full py-3 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">Dashboard</span>
+</button>
+<button class="flex flex-col items-center gap-1 w-full py-3 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors">
+<span class="material-symbols-outlined">vertical_split</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">News</span>
+</button>
+<button class="flex flex-col items-center gap-1 w-full py-3 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors">
+<span class="material-symbols-outlined">video_library</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">Studio</span>
+</button>
+<button class="flex flex-col items-center gap-1 w-full py-3 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">Arc</span>
+</button>
+<button class="flex flex-col items-center gap-1 w-full py-3 text-[#F2CA50] border-l-2 border-[#F2CA50] bg-[#D4AF37]/5">
+<span class="material-symbols-outlined">translate</span>
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.05rem] uppercase">Engine</span>
+</button>
+</nav>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-20 flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-40 flex justify-between items-center px-6 bg-[#131313]/80 backdrop-blur-xl h-14 border-b border-[#D4AF37]/15">
+<div class="flex items-center gap-8">
+<span class="font-['Newsreader'] text-2xl italic text-[#F2CA50]">Vernacular Engine</span>
+<div class="flex items-center gap-4 bg-surface-container-low px-3 py-1 border border-outline-variant/20">
+<span class="material-symbols-outlined text-sm text-primary">search</span>
+<input class="bg-transparent border-none text-xs font-mono focus:ring-0 w-64 text-on-surface" placeholder="Lookup symbol or idiom..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="text-[0.65rem] uppercase tracking-widest text-outline">Adaptation Depth</span>
+<input class="w-32 accent-primary bg-transparent" max="100" min="0" type="range" value="85"/>
+<span class="text-[0.65rem] font-mono text-primary">85%</span>
+</div>
+<div class="h-6 w-[1px] bg-outline-variant/30"></div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary">notifications</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary">settings</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Tooling Sub-Header -->
+<div class="bg-surface-container-lowest border-b border-outline-variant/10 px-6 py-2 flex justify-between items-center">
+<div class="flex gap-4">
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1 border border-primary/20">
+<span class="text-[0.65rem] text-primary font-mono uppercase">Source:</span>
+<span class="text-xs font-bold text-on-surface">English (US)</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">arrow_right_alt</span>
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1 border border-primary/20 cursor-pointer hover:border-primary transition-all">
+<span class="text-[0.65rem] text-primary font-mono uppercase">Target:</span>
+<span class="text-xs font-bold text-on-surface">Japanese (Market-Specific)</span>
+<span class="material-symbols-outlined text-xs">expand_more</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary px-3 py-1 text-on-primary text-[0.65rem] font-bold uppercase tracking-wider">Commit Synthesis</button>
+<button class="border border-outline-variant/30 px-3 py-1 text-on-surface text-[0.65rem] font-bold uppercase tracking-wider">Export PDF</button>
+</div>
+</div>
+<!-- Translation Interface -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left Panel: Original -->
+<section class="flex-1 bg-surface border-r border-outline-variant/20 overflow-y-auto p-8 relative">
+<div class="max-w-2xl mx-auto space-y-8">
+<div class="space-y-2">
+<span class="text-[0.65rem] font-mono text-primary px-2 py-0.5 border border-primary/30">ORIGINAL TRANSCRIPT: WSJ ANALYSIS</span>
+<h1 class="font-headline text-4xl leading-tight">Hawkish Pivot: Fed Signals Long-Term Yield Hold</h1>
+</div>
+<div class="font-body text-lg leading-relaxed text-on-surface-variant space-y-6">
+<p>The Federal Reserve's latest minutes suggest a <span class="bg-primary/10 border-b border-primary text-primary px-1 cursor-help" id="idiom-1">hawkish pivot</span> that has caught institutional investors <span class="bg-primary/10 border-b border-primary text-primary px-1 cursor-help" id="idiom-2">flat-footed</span>. While the market was pricing in a rate cut by Q3, the central bank appears determined to <span class="bg-primary/10 border-b border-primary text-primary px-1 cursor-help" id="idiom-3">stay the course</span> until inflation reaches the magic 2% target.</p>
+<p>This <span class="bg-primary/10 border-b border-primary text-primary px-1 cursor-help" id="idiom-4">double-edged sword</span> presents a challenge for emerging markets. As the dollar strengthens, capital flight becomes a <span class="bg-primary/10 border-b border-primary text-primary px-1 cursor-help" id="idiom-5">zero-sum game</span> for developing economies struggling with sovereign debt.</p>
+<p>Analysts suggest that the current <span class="bg-primary/10 border-b border-primary text-primary px-1 cursor-help" id="idiom-6">bull trap</span> in tech stocks might be the final gasp before a broader market correction. The <span class="bg-primary/10 border-b border-primary text-primary px-1 cursor-help" id="idiom-7">smart money</span> is already rotating into defensive utilities and energy plays.</p>
+</div>
+</div>
+</section>
+<!-- Semantic Connection Canvas (Overlay Simulation) -->
+<div class="absolute inset-0 pointer-events-none flex justify-center z-10 opacity-30">
+<!-- SVG Connections would go here; simulating with a grid of subtle dots -->
+<div class="w-[2px] h-full bg-gradient-to-b from-primary via-secondary-container to-primary/0 shadow-[0_0_15px_rgba(242,202,80,0.5)]"></div>
+</div>
+<!-- Right Panel: Adaptation -->
+<section class="flex-1 bg-surface-container-low overflow-y-auto p-8 relative">
+<div class="max-w-2xl mx-auto space-y-8">
+<div class="space-y-2">
+<span class="text-[0.65rem] font-mono text-secondary-fixed-dim px-2 py-0.5 border border-secondary-fixed-dim/30">ADAPTED VERNACULAR (JP)</span>
+<h1 class="font-headline text-4xl leading-tight">タカ派への転換：FRBが長期金利据え置きを示唆</h1>
+</div>
+<div class="font-body text-lg leading-relaxed text-on-surface-variant space-y-6">
+<p>連邦準備制度理事会（FRB）の最新の議事要旨は、機関投資家の<span class="bg-secondary-container/10 border-b border-secondary-fixed-dim text-secondary-fixed-dim px-1 cursor-help">不意を突く</span>ような<span class="bg-secondary-container/10 border-b border-secondary-fixed-dim text-secondary-fixed-dim px-1 cursor-help">タカ派的転換</span>を示唆しています。市場は第3四半期までの利下げを織り込んでいましたが、中央銀行はインフレ率が目標の2%に達するまで<span class="bg-secondary-container/10 border-b border-secondary-fixed-dim text-secondary-fixed-dim px-1 cursor-help">方針を貫く</span>構えのようです。</p>
+<p>この<span class="bg-secondary-container/10 border-b border-secondary-fixed-dim text-secondary-fixed-dim px-1 cursor-help">諸刃の剣</span>は、新興国市場にとって大きな課題となります。ドル高が進む中、対外債務に苦しむ発展途上国にとって、資本流出は<span class="bg-secondary-container/10 border-b border-secondary-fixed-dim text-secondary-fixed-dim px-1 cursor-help">ゼロサム・ゲーム</span>の様相を呈しています。</p>
+<p>アナリストは、現在のハイテク株における<span class="bg-secondary-container/10 border-b border-secondary-fixed-dim text-secondary-fixed-dim px-1 cursor-help">ブル・トラップ（強気トラップ）</span>が、より広範な市場調整前の最後のあがきである可能性を指摘しています。<span class="bg-secondary-container/10 border-b border-secondary-fixed-dim text-secondary-fixed-dim px-1 cursor-help">スマート・マネー（抜け目のない投資家）</span>は、すでにディフェンシブな公益事業やエネルギー株へのローテーションを開始しています。</p>
+</div>
+<!-- Glossary/Insight Panel -->
+<div class="mt-12 bg-surface-container-highest border border-outline-variant/30 p-4">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+<span class="text-[0.65rem] font-mono uppercase tracking-tighter text-primary">Contextual Adaptation Notes</span>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-start border-b border-outline-variant/10 pb-2">
+<span class="text-xs font-mono text-primary">idiom_1</span>
+<span class="text-xs text-on-surface w-2/3">"Hawkish Pivot" translated to 「タカ派的転換」. Retained loan-word for professional financial accuracy.</span>
+</div>
+<div class="flex justify-between items-start border-b border-outline-variant/10 pb-2">
+<span class="text-xs font-mono text-primary">idiom_2</span>
+<span class="text-xs text-on-surface w-2/3">"Flat-footed" localized as 「不意を突く」(caught off guard) to maintain professional gravitas over literal sport idioms.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom Market Ticker -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex items-center overflow-hidden whitespace-nowrap bg-[#0E0E0E]/90 backdrop-blur-md h-8 border-t border-[#D4AF37]/20 shadow-[0_-4px_12px_rgba(242,202,80,0.05)]">
+<div class="flex items-center gap-8 animate-marquee-slow px-4">
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-xs tracking-tighter text-on-surface">S&amp;P 500</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-xs text-[#13FF41]">5,432.12 (+0.42%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-xs tracking-tighter text-on-surface">NASDAQ</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-xs text-[#13FF41]">16,782.50 (+0.81%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-xs tracking-tighter text-on-surface">BTC/USD</span>
+<span class="material-symbols-outlined text-xs text-[#FF968B]">trending_down</span>
+<span class="font-['Space_Mono'] text-xs text-[#FF968B]">62,104.20 (-1.24%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-xs tracking-tighter text-on-surface">GOLD</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-xs text-[#13FF41]">2,342.10 (+0.15%)</span>
+</div>
+<!-- Duplicate for seamless loop -->
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-xs tracking-tighter text-on-surface">S&amp;P 500</span>
+<span class="material-symbols-outlined text-xs text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-xs text-[#13FF41]">5,432.12 (+0.42%)</span>
+</div>
+</div>
+</footer>
+</main>
+<!-- Floating Analysis Module -->
+<div class="fixed bottom-12 right-6 w-80 bg-surface border border-primary/20 p-4 shadow-2xl z-40 backdrop-blur-xl">
+<div class="flex justify-between items-center mb-4">
+<span class="text-[0.65rem] font-mono text-primary uppercase">Vernacular Synthesis</span>
+<span class="material-symbols-outlined text-xs text-outline cursor-pointer">close</span>
+</div>
+<div class="space-y-4">
+<div class="h-32 bg-surface-container relative overflow-hidden">
+<img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" data-alt="high-tech abstract visualization of glowing digital data nodes connected by golden light paths on a dark obsidian background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3l3F9TTJo60UnywqeuyIrQFGsN2LW3Fg0Qb29b-uUA-1YckNpDbVsEwaIaFviyrA0swCSwTD8iqrso5afBqPrXqVHY_WZCSGTQzfbAEfqp9Cd7efW4DLTh_SBvmOWqdxjJRC9RIoUK7Bd3FAcrdka2HlECqdsqhGT1JZo0oKQvTLrbDwN-0BPfd_aHYQGBDigzCc2qkCRYEgwGKMXrwYHm4VfsonzXogxnDlbpCYZe4Qto7scGzcau7nj8W_bm8E3HwbrvoqHmw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between">
+<span class="text-xs text-outline">Confidence Score</span>
+<span class="text-xs font-mono text-secondary-fixed-dim">98.4%</span>
+</div>
+<div class="w-full bg-outline-variant/20 h-1">
+<div class="bg-secondary-fixed-dim h-full w-[98%]"></div>
+</div>
+<p class="text-[0.7rem] leading-relaxed text-on-surface-variant">
+                    Engine detected high-frequency financial idioms. Translation tuned for <span class="text-primary italic">Executive Institutional</span> tone.
+                </p>
+</div>
+</div>
+</div>
+<style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee-slow {
+            animation: marquee 40s linear infinite;
+        }
+    </style>
+</body></html>

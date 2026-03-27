@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aureum Terminal v2 | Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Space+Grotesk:wght@300..700&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-error-container": "#ffdad6",
+                "outline": "#99907c",
+                "outline-variant": "#4d4635",
+                "background": "#131313",
+                "on-secondary-container": "#007117",
+                "primary-fixed": "#ffe088",
+                "inverse-surface": "#e2e2e2",
+                "on-secondary": "#003907",
+                "surface-container-low": "#1b1b1b",
+                "surface-container-highest": "#353535",
+                "on-background": "#e2e2e2",
+                "surface-tint": "#e9c349",
+                "on-surface-variant": "#d0c5af",
+                "secondary-container": "#13ff43",
+                "on-error": "#690005",
+                "surface-variant": "#353535",
+                "inverse-primary": "#735c00",
+                "on-tertiary-container": "#90000c",
+                "on-primary": "#3c2f00",
+                "inverse-on-surface": "#303030",
+                "surface-container": "#1f1f1f",
+                "primary": "#f2ca50",
+                "on-tertiary": "#690006",
+                "primary-fixed-dim": "#e9c349",
+                "on-secondary-fixed-variant": "#00530e",
+                "secondary-fixed-dim": "#00e639",
+                "tertiary-fixed-dim": "#ffb4ab",
+                "tertiary-container": "#ff968b",
+                "primary-container": "#d4af37",
+                "surface-bright": "#393939",
+                "error": "#ffb4ab",
+                "surface-container-high": "#2a2a2a",
+                "surface-container-lowest": "#0e0e0e",
+                "error-container": "#93000a",
+                "surface-dim": "#131313",
+                "on-surface": "#e2e2e2",
+                "on-primary-fixed-variant": "#574500",
+                "secondary": "#ecffe3",
+                "on-primary-container": "#554300",
+                "tertiary-fixed": "#ffdad6",
+                "on-primary-fixed": "#241a00",
+                "tertiary": "#ffbfb8",
+                "secondary-fixed": "#72ff70",
+                "on-secondary-fixed": "#002203",
+                "on-tertiary-fixed": "#410002",
+                "on-tertiary-fixed-variant": "#93000c",
+                "surface": "#131313"
+              },
+              fontFamily: {
+                "headline": ["Newsreader"],
+                "body": ["Space Grotesk"],
+                "label": ["Space Grotesk"],
+                "mono": ["Space Mono"]
+              },
+              borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .glass-card {
+            background: rgba(19, 19, 19, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .ticker-animate {
+            display: flex;
+            animation: ticker 30s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary overflow-x-hidden">
+<!-- SideNavBar (JSON Derived) -->
+<aside class="fixed left-0 top-0 h-full z-50 h-screen w-20 flex flex-col border-r border-[#D4AF37]/20 bg-[#0E0E0E]">
+<div class="h-14 flex items-center justify-center border-b border-[#D4AF37]/20">
+<span class="font-['Newsreader'] italic text-xl text-[#F2CA50]">A</span>
+</div>
+<nav class="flex-1 flex flex-col items-center py-6 gap-8">
+<!-- Dashboard (Active) -->
+<a class="group flex flex-col items-center gap-1 w-full py-3 text-[#F2CA50] border-l-2 border-[#F2CA50] bg-[#D4AF37]/5" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-['Space_Grotesk'] text-[0.625rem] tracking-[0.05rem] uppercase">Dashboard</span>
+</a>
+<!-- Inactive items -->
+<a class="group flex flex-col items-center gap-1 w-full py-3 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors" href="#">
+<span class="material-symbols-outlined">vertical_split</span>
+<span class="font-['Space_Grotesk'] text-[0.625rem] tracking-[0.05rem] uppercase text-center px-1">News Navigator</span>
+</a>
+<a class="group flex flex-col items-center gap-1 w-full py-3 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors" href="#">
+<span class="material-symbols-outlined">video_library</span>
+<span class="font-['Space_Grotesk'] text-[0.625rem] tracking-[0.05rem] uppercase text-center px-1">Video Studio</span>
+</a>
+<a class="group flex flex-col items-center gap-1 w-full py-3 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors" href="#">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-['Space_Grotesk'] text-[0.625rem] tracking-[0.05rem] uppercase text-center px-1">Story Arc</span>
+</a>
+<a class="group flex flex-col items-center gap-1 w-full py-3 text-[#D4AF37]/40 hover:bg-[#D4AF37]/10 hover:text-[#F2CA50] transition-colors" href="#">
+<span class="material-symbols-outlined">translate</span>
+<span class="font-['Space_Grotesk'] text-[0.625rem] tracking-[0.05rem] uppercase text-center px-1">Vernacular</span>
+</a>
+</nav>
+<div class="pb-6 flex flex-col items-center gap-4">
+<span class="font-['Space_Grotesk'] text-[0.6875rem] tracking-[0.1em] text-[#D4AF37]/40 rotate-180 [writing-mode:vertical-lr]">AUREUM V2.0</span>
+</div>
+</aside>
+<!-- TopAppBar (JSON Derived) -->
+<header class="sticky top-0 w-full z-40 flex justify-between items-center px-6 h-14 ml-20 w-[calc(100%-5rem)] bg-[#131313]/80 backdrop-blur-xl border-b border-[#D4AF37]/15">
+<div class="flex items-center gap-8 flex-1">
+<span class="font-['Newsreader'] text-2xl italic text-[#F2CA50]">Aureum Terminal</span>
+<div class="relative w-96 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#D4AF37]/40 text-sm">search</span>
+<input class="w-full bg-white/5 border-none focus:ring-1 focus:ring-[#F2CA50] text-sm py-1.5 pl-10 text-on-surface placeholder:text-[#D4AF37]/30" placeholder="Search markets, news, or sectors..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<button class="text-[#D4AF37]/60 hover:text-[#F2CA50] transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-[#D4AF37]/60 hover:text-[#F2CA50] transition-colors"><span class="material-symbols-outlined">settings</span></button>
+<button class="text-[#D4AF37]/60 hover:text-[#F2CA50] transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-20 p-6 pb-16 min-h-screen">
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 auto-rows-min">
+<!-- Personalized Morning Briefing (Top Row - Span Full) -->
+<section class="lg:col-span-12 glass-card border border-on-secondary-container/30 p-8 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-secondary-container/5 blur-[100px]"></div>
+<div class="flex flex-col md:flex-row justify-between items-start gap-8 relative z-10">
+<div class="max-w-3xl">
+<div class="flex items-center gap-2 mb-4">
+<span class="text-secondary-container font-mono text-xs tracking-widest uppercase">Intelligent Briefing • 08:30 AM EST</span>
+<div class="h-px flex-1 bg-on-secondary-container/20"></div>
+</div>
+<h1 class="font-headline text-4xl md:text-5xl font-bold text-on-surface mb-6 leading-tight">Good morning. Tech sector is up 1.8%, driven by AI-driven growth and resilient chip demand.</h1>
+<p class="font-body text-lg text-on-surface-variant leading-relaxed mb-6">
+                            Macro sentiment has shifted bullish as inflation print came in 10bps below consensus. The Sovereign Analyst identifies a decoupling in mid-cap SaaS: while the giants consolidate, boutique AI infrastructure providers are seeing record inflows. You should monitor the $NVDA earnings preview today; positioning suggests a 5% implied move.
+                        </p>
+<div class="flex gap-4">
+<button class="bg-primary-container text-on-primary px-6 py-2 text-sm font-bold border-none hover:brightness-110 transition-all">EXECUTE TRADE PLAN</button>
+<button class="border border-outline-variant/30 text-primary px-6 py-2 text-sm font-bold hover:bg-white/5 transition-all">FULL ANALYSIS</button>
+</div>
+</div>
+<div class="flex-shrink-0 w-full md:w-auto">
+<div class="bg-surface-container-low p-4 border border-outline-variant/20">
+<div class="text-[0.625rem] text-[#D4AF37]/50 font-mono uppercase mb-2 tracking-tighter">AI Pulse Check</div>
+<div class="flex items-end gap-2">
+<span class="text-3xl font-mono text-secondary-container leading-none">94%</span>
+<span class="text-xs font-mono text-secondary-container pb-1">BULLISH</span>
+</div>
+<div class="mt-4 flex gap-1 h-1">
+<div class="w-12 h-full bg-secondary-container"></div>
+<div class="w-8 h-full bg-secondary-container"></div>
+<div class="w-10 h-full bg-secondary-container/40"></div>
+<div class="w-4 h-full bg-secondary-container/10"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Middle Row - Left: Impact Radar -->
+<section class="lg:col-span-4 bg-surface-container-lowest p-6 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline text-xl font-bold text-primary">Impact Radar</h2>
+<span class="font-mono text-[0.65rem] text-secondary-container border border-secondary-container/20 px-2 py-0.5">MODERATE VOLATILITY</span>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center relative py-8">
+<!-- Fake Radar Visualization -->
+<div class="w-48 h-48 border border-outline-variant/20 rounded-full flex items-center justify-center relative">
+<div class="w-32 h-32 border border-outline-variant/20 rounded-full"></div>
+<div class="w-16 h-16 border border-outline-variant/20 rounded-full"></div>
+<!-- Axis lines -->
+<div class="absolute w-full h-px bg-outline-variant/10"></div>
+<div class="absolute h-full w-px bg-outline-variant/10"></div>
+<!-- Data Shape -->
+<div class="absolute inset-0 flex items-center justify-center">
+<svg class="w-40 h-40" viewbox="0 0 100 100">
+<path d="M50 20 L80 40 L70 80 L30 75 L20 45 Z" fill="rgba(19, 255, 65, 0.1)" stroke="#13FF41" stroke-width="1"></path>
+<circle cx="50" cy="20" fill="#13FF41" r="1.5"></circle>
+<circle cx="80" cy="40" fill="#13FF41" r="1.5"></circle>
+<circle cx="70" cy="80" fill="#13FF41" r="1.5"></circle>
+<circle cx="30" cy="75" fill="#13FF41" r="1.5"></circle>
+<circle cx="20" cy="45" fill="#13FF41" r="1.5"></circle>
+</svg>
+</div>
+</div>
+</div>
+<div class="mt-6 space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-on-surface-variant font-mono uppercase tracking-tighter">Tech Sector Rallying</span>
+<span class="text-secondary-container font-mono">+2.4% Intensity</span>
+</div>
+<div class="h-1 bg-surface-container-highest">
+<div class="h-full bg-secondary-container w-[72%]"></div>
+</div>
+<p class="text-[0.75rem] text-on-surface-variant italic">Volatilty clusters forming in Energy; potential spillover in 48h.</p>
+</div>
+</section>
+<!-- Middle Row - Center: Contrarian Opinions -->
+<section class="lg:col-span-4 bg-surface-container-low p-6 flex flex-col">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary text-lg">psychology_alt</span>
+<h2 class="font-headline text-xl font-bold text-on-surface">Contrarian Opinions</h2>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-surface border-l-2 border-tertiary-container hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex justify-between text-[0.625rem] font-mono mb-1">
+<span class="text-tertiary-container uppercase">The Bear Case</span>
+<span class="text-on-surface-variant">4m ago</span>
+</div>
+<h3 class="font-bold text-sm leading-tight mb-2">"AI valuations have detached from EBITDA realities; prepare for a 15% correction in GPU manufacturers."</h3>
+<p class="text-xs text-on-surface-variant">Author: Dr. Marcus Vane • Chief Macro Strategist</p>
+</div>
+<div class="p-4 bg-surface border-l-2 border-primary-container hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex justify-between text-[0.625rem] font-mono mb-1">
+<span class="text-primary-container uppercase">Structural Shift</span>
+<span class="text-on-surface-variant">12m ago</span>
+</div>
+<h3 class="font-bold text-sm leading-tight mb-2">"Labor shortages in manufacturing will drive robotics faster than LLMs—buy physical automation."</h3>
+<p class="text-xs text-on-surface-variant">Author: Sarah Jenkins • Industrial Lead</p>
+</div>
+<div class="p-4 bg-surface border-l-2 border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer">
+<div class="flex justify-between text-[0.625rem] font-mono mb-1">
+<span class="text-on-surface-variant uppercase">Alternative Alpha</span>
+<span class="text-on-surface-variant">1h ago</span>
+</div>
+<h3 class="font-bold text-sm leading-tight mb-2">"Uranium supply crunch is no longer priced in. $CCJ position looks asymmetrical."</h3>
+<p class="text-xs text-on-surface-variant">Author: Terminal AI Engine</p>
+</div>
+</div>
+</section>
+<!-- Middle Row - Right: Market Heatmap -->
+<section class="lg:col-span-4 bg-surface-container-lowest p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline text-xl font-bold text-on-surface">Market Heatmap</h2>
+<div class="flex gap-2">
+<div class="w-2 h-2 bg-secondary-container"></div>
+<div class="w-2 h-2 bg-tertiary-container"></div>
+</div>
+</div>
+<div class="grid grid-cols-4 grid-rows-4 gap-1 h-[280px]">
+<div class="col-span-2 row-span-2 bg-secondary-container/90 flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-xs font-bold text-[#003907]">TECH</span>
+<span class="font-mono text-[0.65rem] text-[#003907] mt-auto">+2.84%</span>
+</div>
+<div class="col-span-2 bg-secondary-container/40 flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-xs font-bold text-secondary-container">FINCL</span>
+<span class="font-mono text-[0.65rem] text-secondary-container mt-auto">+1.12%</span>
+</div>
+<div class="bg-tertiary-container/80 flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-[0.65rem] font-bold text-[#690005]">ENRGY</span>
+<span class="font-mono text-[0.6rem] text-[#690005] mt-auto">-1.4%</span>
+</div>
+<div class="bg-secondary-container/20 flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-[0.65rem] font-bold text-secondary-container">HLTH</span>
+<span class="font-mono text-[0.6rem] text-secondary-container mt-auto">+0.3%</span>
+</div>
+<div class="bg-tertiary-container/40 flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-[0.65rem] font-bold text-tertiary-container">RE</span>
+<span class="font-mono text-[0.6rem] text-tertiary-container mt-auto">-0.8%</span>
+</div>
+<div class="bg-surface-container flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-[0.65rem] font-bold text-on-surface-variant">UTIL</span>
+<span class="font-mono text-[0.6rem] text-on-surface-variant mt-auto">0.0%</span>
+</div>
+<div class="col-span-2 bg-tertiary-container/95 flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-xs font-bold text-[#690005]">CONS</span>
+<span class="font-mono text-[0.65rem] text-[#690005] mt-auto">-3.12%</span>
+</div>
+<div class="bg-secondary-container/60 flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-[0.65rem] font-bold text-on-secondary-container">COMM</span>
+<span class="font-mono text-[0.6rem] text-on-secondary-container mt-auto">+1.9%</span>
+</div>
+<div class="bg-tertiary-container/20 flex flex-col p-2 group hover:brightness-110 transition-all cursor-crosshair">
+<span class="font-mono text-[0.65rem] font-bold text-tertiary-container">INDUS</span>
+<span class="font-mono text-[0.6rem] text-tertiary-container mt-auto">-0.2%</span>
+</div>
+</div>
+</section>
+<!-- Bottom Row: Trending Clusters (News Cards) -->
+<div class="lg:col-span-12 mt-4">
+<h2 class="font-headline text-2xl font-bold mb-6 text-on-surface">Trending Clusters</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Cluster Card 1 -->
+<div class="bg-surface-container p-4 border-t-2 border-primary-container group hover:bg-surface-container-high transition-all">
+<div class="flex justify-between items-start mb-3">
+<span class="font-mono text-[0.65rem] text-primary bg-primary/10 px-2 py-0.5">SEMICONDUCTORS</span>
+<span class="font-mono text-xs text-secondary-container">+4.2% Cluster Move</span>
+</div>
+<h3 class="font-bold text-base leading-snug mb-4">TSMC outlook exceeds analyst targets as AI infrastructure spend accelerates globally.</h3>
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 object-cover grayscale" data-alt="microchip processor architecture detail macro photography with glowing circuits and technical aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd0CyMVvZtHuZ41_TVn-SA84vnGssJtwq2FhZWl3QoiEBmS4dIbC6XiakASto7MkzV8uMY_ygjNhR4P9KyT4gEaMgwYnhKzvEs9XntoaJdOtHmRzaFr1IPwcHwErsgd96vNuawWPFZlgibogtFafCL7bnAgq574V4yaJJ80dyW9J7MCf43_dP4COjR1SflT9yHirffjSClKyG_sbkH1L2JzOPVrAjWhQlOh8FFrUcTviKjzZXeOdSRvMrUmo7mIAx9Ziz_swKXOg"/>
+<div class="flex-1">
+<div class="h-1 bg-surface-container-highest w-full mb-1">
+<div class="h-full bg-secondary-container w-[88%]"></div>
+</div>
+<span class="text-[0.6rem] text-on-surface-variant font-mono uppercase">Sentiment: Highly Positive</span>
+</div>
+</div>
+</div>
+<!-- Cluster Card 2 -->
+<div class="bg-surface-container p-4 border-t-2 border-tertiary-container group hover:bg-surface-container-high transition-all">
+<div class="flex justify-between items-start mb-3">
+<span class="font-mono text-[0.65rem] text-tertiary bg-tertiary/10 px-2 py-0.5">CRUDE OIL</span>
+<span class="font-mono text-xs text-tertiary-container">-2.1% Cluster Move</span>
+</div>
+<h3 class="font-bold text-base leading-snug mb-4">WTI falls to 6-month low as output concerns offset geopolitical tensions in the Gulf.</h3>
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 object-cover grayscale" data-alt="industrial oil refinery silhouette at dusk with dramatic orange sky and geometric metallic structures" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOI6tXkj0Gs2pnSMCPkWURJs7WfoDlw8ctB3YafDLRjVQgalgys41ZSErGsoHU1-qGinJTsqit_oLlvxR2u8e18-LcFqvWREL5ONpo5_Siphdektm9nGdynzbEol2ZAZ7ii9BpM8SGOPXcmBtGq_-ylil2KEFyvRVL_YU0Ix3y1YrFFVavhVM2gWlahhXh67P8zgXKL7A9AYHXL-yjrP1Yap810Owhq7Z6YKqiw5iuuRAsD4dqvCQs9TqN5XM1jU5DwtcffgPRwA"/>
+<div class="flex-1">
+<div class="h-1 bg-surface-container-highest w-full mb-1">
+<div class="h-full bg-tertiary-container w-[45%]"></div>
+</div>
+<span class="text-[0.6rem] text-on-surface-variant font-mono uppercase">Sentiment: Negative</span>
+</div>
+</div>
+</div>
+<!-- Cluster Card 3 -->
+<div class="bg-surface-container p-4 border-t-2 border-outline-variant group hover:bg-surface-container-high transition-all">
+<div class="flex justify-between items-start mb-3">
+<span class="font-mono text-[0.65rem] text-on-surface-variant bg-white/5 px-2 py-0.5">RETAIL</span>
+<span class="font-mono text-xs text-on-surface-variant">0.0% Cluster Move</span>
+</div>
+<h3 class="font-bold text-base leading-snug mb-4">Mixed signals from Q3 spending data as luxury slows but essential staples remain resilient.</h3>
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 object-cover grayscale" data-alt="modern minimalist retail interior with clean lines high contrast lighting and luxury fashion aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaMwytAdOR_tI2jsizTrqAbV01mYBF6NzKh9twq89J7QX8VoVY5JZ5NA0hfD5zTyImG0Vt6aQzUkcgyLdaou1EDcii9wB8fNN2nJ5B0njGMZbH4P1YGFOOIYOAc90Qr5nvPV01Un7n194DrAZpgQxJMOFfGj0HqRvWscPZWU08NfUPZM2wQxcMS-dAInOLJulQJoYTqwz1PwysLZL-xMAGjYQVMBT6OsmE2icuokScgyoHwfSmsoOgWP8gw215gz-KOuvWwuVh2A"/>
+<div class="flex-1">
+<div class="h-1 bg-surface-container-highest w-full mb-1">
+<div class="h-full bg-outline w-[50%]"></div>
+</div>
+<span class="text-[0.6rem] text-on-surface-variant font-mono uppercase">Sentiment: Neutral</span>
+</div>
+</div>
+</div>
+<!-- Cluster Card 4 -->
+<div class="bg-surface-container p-4 border-t-2 border-secondary-container group hover:bg-surface-container-high transition-all">
+<div class="flex justify-between items-start mb-3">
+<span class="font-mono text-[0.65rem] text-secondary-container bg-secondary-container/10 px-2 py-0.5">CRYPTOCURRENCY</span>
+<span class="font-mono text-xs text-secondary-container">+12.4% Cluster Move</span>
+</div>
+<h3 class="font-bold text-base leading-snug mb-4">Bitcoin breaches $70k threshold as institutional ETF inflows hit record daily volume.</h3>
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 object-cover grayscale" data-alt="close-up of digital currency hardware wallet with dramatic lighting and glowing binary code reflection" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQPl94-zeMDt1k1wdsD6keTzOdJ4IAfBV6MTxuU_QF0YXdb-r6_H8q6TiFbUjH1rIX8OKJb3lBZQP4FTOp5UE46Bh4L9DIq-stbozxFWl-PLmg5sIx8Yle4dqkFdo6jLEip9U2VAGm8PbghumPyvqob1gb1TUU_NUyS41DTbfaNeU4Ja5Q6OA5b3oQB8ZClgYV0SjjaSkgePUnFc6xeuj_Jp7u8N-dI-wkfkKxr59ap9Gph-5twkp4UwyzoU_MaLjb2Fyve-2doQ"/>
+<div class="flex-1">
+<div class="h-1 bg-surface-container-highest w-full mb-1">
+<div class="h-full bg-secondary-container w-[95%]"></div>
+</div>
+<span class="text-[0.6rem] text-on-surface-variant font-mono uppercase">Sentiment: Explosive</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Ticker Logic Derived from JSON) -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex items-center overflow-hidden whitespace-nowrap bg-[#0E0E0E]/90 backdrop-blur-md h-8 border-t border-[#D4AF37]/20 shadow-[0_-4px_12px_rgba(242,202,80,0.05)]">
+<div class="ticker-animate flex gap-12 items-center">
+<!-- Ticker Item 1 -->
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">S&amp;P 500</span>
+<span class="material-symbols-outlined text-[14px] text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-[#13FF41]">5,421.22 (+1.2%)</span>
+</div>
+<!-- Ticker Item 2 -->
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">NASDAQ</span>
+<span class="material-symbols-outlined text-[14px] text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-[#13FF41]">16,428.10 (+1.8%)</span>
+</div>
+<!-- Ticker Item 3 -->
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">BTC/USD</span>
+<span class="material-symbols-outlined text-[14px] text-[#FF968B]">trending_down</span>
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-[#FF968B]">71,402.50 (-0.4%)</span>
+</div>
+<!-- Ticker Item 4 -->
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">GOLD</span>
+<span class="material-symbols-outlined text-[14px] text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-[#13FF41]">2,354.10 (+0.8%)</span>
+</div>
+<!-- Repeat for seamless loop -->
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">S&amp;P 500</span>
+<span class="material-symbols-outlined text-[14px] text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-[#13FF41]">5,421.22 (+1.2%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">NASDAQ</span>
+<span class="material-symbols-outlined text-[14px] text-[#13FF41]">trending_up</span>
+<span class="font-['Space_Mono'] text-[0.65rem] tracking-tighter text-[#13FF41]">16,428.10 (+1.8%)</span>
+</div>
+</div>
+</footer>
+</body></html>

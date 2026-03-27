@@ -2,66 +2,67 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector:'app-contrarian-card',
-  standalone:true,
-  imports:[CommonModule],
-  template:`
-  <div *ngIf="opinions && !opinions.loading && !opinions.error">
-    <h3 class="text-sm font-bold uppercase tracking-widest text-orange-400 mb-4">Contrarian Opinions</h3>
-
-    <!-- Handle array of opinions -->
-    <div *ngIf="isArray(opinions)" class="space-y-2">
-      <div *ngFor="let opinion of opinions" class="flex gap-3 p-3 rounded-lg bg-slate-700/30">
-        <div class="flex-shrink-0 rounded-full bg-orange-500 mt-2" style="width: 8px; height: 8px;"></div>
-        <p class="text-xs text-slate-300">{{ opinion }}</p>
+  selector: 'app-contrarian-card',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div *ngIf="opinions && !opinions.loading && !opinions.error" class="space-y-6">
+      <div class="border-l-2 border-secondary-container pl-4 py-1">
+        <div class="text-[0.625rem] text-secondary-container font-mono uppercase tracking-[0.1em] mb-1 italic">Bullish Case / Synthesis</div>
+        <p class="font-body text-sm text-on-surface line-clamp-3 italic">
+          {{ getPerspective(0) }}
+        </p>
+      </div>
+      <div class="border-l-2 border-tertiary-container pl-4 py-1">
+        <div class="text-[0.625rem] text-tertiary-container font-mono uppercase tracking-[0.1em] mb-1 italic">Bearish Case / Risks</div>
+        <p class="font-body text-sm text-on-surface line-clamp-3 italic opacity-80">
+          {{ getPerspective(1) }}
+        </p>
+      </div>
+      <div *ngIf="getPerspectiveCount() > 2" class="border-l-2 border-primary-container pl-4 py-1">
+        <div class="text-[0.625rem] text-primary-container font-mono uppercase tracking-[0.1em] mb-1 italic">Contrarian Synthesis</div>
+        <p class="font-body text-sm text-on-surface line-clamp-2 italic opacity-60">
+          {{ getPerspective(2) }}
+        </p>
       </div>
     </div>
 
-    <!-- Handle string response -->
-    <div *ngIf="isString(opinions)" class="p-3 rounded-lg bg-slate-700/30">
-      <p class="text-xs text-slate-300 whitespace-pre-wrap">{{ opinions }}</p>
-    </div>
-
-    <!-- Handle object response -->
-    <div *ngIf="!isArray(opinions) && !isString(opinions)" class="space-y-2">
-      <div class="p-3 rounded-lg bg-slate-700/30">
-        <p class="text-xs text-slate-300 whitespace-pre-wrap">{{ getOpinionText() }}</p>
+    <div *ngIf="opinions?.loading" class="flex flex-col items-center justify-center h-full gap-4">
+      <div class="w-12 h-1 bg-primary/20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-primary animate-[ticker_2s_linear_infinite]"></div>
       </div>
+      <span class="text-[0.65rem] font-mono text-primary/40 uppercase tracking-widest">Computing Sentiment...</span>
     </div>
-  </div>
 
-  <div *ngIf="opinions?.loading" class="flex items-center justify-center h-full">
-    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
-    <span class="text-xs text-slate-500 ml-2">Computing sentiment...</span>
-  </div>
-
-  <div *ngIf="opinions?.error" class="text-rose-400 text-sm">
-    ⚠️ {{ opinions.error }}
-  </div>
-  `
+    <div *ngIf="opinions?.error" class="text-tertiary-container text-[0.65rem] font-mono uppercase border border-tertiary-container/30 p-4">
+      ERR: LOG_ANALYSIS_FAILURE // {{ opinions.error }}
+    </div>
+  `,
+  styles: [`
+    @keyframes ticker {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+  `]
 })
 export class ContrarianCardComponent {
   @Input() opinions: any;
 
-  isArray(val: any): boolean {
-    return Array.isArray(val);
+  getPerspective(index: number): string {
+    const list = this.getPerspectiveList();
+    return list[index] || (index === 0 ? 'Synthesis in progress...' : 'Awaiting alternative viewpoints...');
   }
 
-  isString(val: any): boolean {
-    return typeof val === 'string';
+  getPerspectiveCount(): number {
+    return this.getPerspectiveList().length;
   }
 
-  getOpinionText(): string {
-    if (!this.opinions) return '';
-    if (this.opinions.contrarian_views) return this.opinions.contrarian_views;
-    if (this.opinions.opinions) {
-      if (typeof this.opinions.opinions === 'string') return this.opinions.opinions;
-      if (Array.isArray(this.opinions.opinions)) return this.opinions.opinions.join('\n');
-    }
-    if (this.opinions.raw) return this.opinions.raw;
-    if (this.opinions.summary) return this.opinions.summary;
-    // Fallback: stringify the data
-    const { loading, error, ...data } = this.opinions;
-    return JSON.stringify(data, null, 2);
+  private getPerspectiveList(): string[] {
+    if (!this.opinions) return [];
+    if (Array.isArray(this.opinions)) return this.opinions;
+    if (this.opinions.opinions && Array.isArray(this.opinions.opinions)) return this.opinions.opinions;
+    if (this.opinions.contrarian_views && Array.isArray(this.opinions.contrarian_views)) return this.opinions.contrarian_views;
+    if (typeof this.opinions === 'string') return this.opinions.split('\n').filter(s => s.trim());
+    return [];
   }
 }

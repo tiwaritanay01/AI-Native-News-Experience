@@ -25,94 +25,172 @@ import { Subscription } from 'rxjs';
     StoryArcComponent
   ],
   template: `
-    <div class="flex h-screen bg-slate-950 overflow-hidden">
-      <!-- Sidebar -->
+    <div class="flex h-screen bg-background text-on-background overflow-hidden font-body">
+      <!-- SideNavBar -->
       <app-sidebar-navigation></app-sidebar-navigation>
 
-      <!-- Main Content -->
-      <div class="flex-1 overflow-auto">
-        <div class="min-h-screen p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-          
-          <!-- Header -->
-          <div class="mb-8">
-            <div class="flex justify-between items-center text-white">
-              <div>
-                <h1 class="text-3xl font-bold mb-2">AI-Native News Experience</h1>
-                <p class="text-slate-400">Streaming Real-Time TPU Insights (JAX-Accelerated)</p>
-              </div>
-              <div class="text-right text-slate-400 text-sm">
-                <div>{{ currentTime }}</div>
-                <div class="flex items-center gap-2 justify-end mt-1">
-                  <span class="w-2 h-2 rounded-full" [class.bg-blue-500]="loading" [class.bg-emerald-500]="!loading && !error" [class.animate-pulse]="loading"></span>
-                  {{ loading ? 'TPU Core Generating...' : 'Analysis Ready' }}
-                </div>
-              </div>
+      <div class="flex-1 flex flex-col min-w-0 ml-20">
+        <!-- TopAppBar -->
+        <header class="sticky top-0 w-full z-40 flex justify-between items-center px-6 h-14 bg-background/80 backdrop-blur-xl border-b border-primary-container/15">
+          <div class="flex items-center gap-8 flex-1">
+            <span class="font-headline text-2xl italic text-primary">Aureum Terminal</span>
+            <div class="relative w-96 max-w-md hidden md:block">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary-container/40 text-sm font-light">search</span>
+              <input class="w-full bg-white/5 border-none focus:ring-1 focus:ring-primary text-sm py-1.5 pl-10 text-on-surface placeholder:text-primary-container/30" 
+                     placeholder="Search markets, news, or sectors..." type="text"/>
             </div>
           </div>
-
-          <!-- Sequential Bento Box Grid -->
-          <div class="dashboard-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Hero Card (Static Content First) -->
-            <div class="lg:col-span-2">
-               <app-hero-card></app-hero-card>
+          <div class="flex items-center gap-6">
+            <div class="flex gap-4">
+              <button class="text-primary-container/60 hover:text-primary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+              <button class="text-primary-container/60 hover:text-primary transition-colors"><span class="material-symbols-outlined">settings</span></button>
+              <button class="text-primary-container/60 hover:text-primary transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
             </div>
+          </div>
+        </header>
 
-            <!-- Why Matters Card (Streams Briefing) -->
-            <div class="relative min-h-[250px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-4">
-                <!-- Overlay disappears once the first stream chunks arrive -->
-                <div *ngIf="!dashboard.briefingStream && loading" class="absolute inset-0 flex items-center justify-center bg-slate-900/80 z-20">
-                   <div class="text-center">
-                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-                      <p class="text-xs text-slate-500">TPU Connection Established...</p>
-                   </div>
+        <!-- Main Content Canvas -->
+        <main class="flex-1 overflow-auto p-6 pb-20 no-scrollbar">
+          <!-- Bento Grid Layout -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 auto-rows-min">
+            
+            <!-- Personalized Morning Briefing (Top Row - Span Full) -->
+            <section class="lg:col-span-12 glass-card border border-on-secondary-container/30 p-8 relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-64 h-64 bg-secondary-container/5 blur-[100px]"></div>
+              <div class="flex flex-col md:flex-row justify-between items-start gap-8 relative z-10">
+                <div class="max-w-4xl">
+                  <div class="flex items-center gap-2 mb-4">
+                    <span class="text-secondary-container font-mono text-xs tracking-widest uppercase">
+                      Intelligent Briefing • {{ currentTime }}
+                    </span>
+                    <div class="h-px flex-1 bg-on-secondary-container/20"></div>
+                  </div>
+                  
+                  <app-hero-card></app-hero-card>
+
+                  <div class="mt-8">
+                     <app-why-matters-card 
+                        [relevance]="dashboard.briefingStream" 
+                        [isGenerating]="loading">
+                     </app-why-matters-card>
+                  </div>
+
+                  <div class="flex gap-4 mt-8">
+                    <button class="bg-primary-container text-on-primary px-6 py-2 text-sm font-bold border-none hover:brightness-110 transition-all">EXECUTE TRADE PLAN</button>
+                    <button (click)="retry()" class="border border-outline-variant/30 text-primary px-6 py-2 text-sm font-bold hover:bg-white/5 transition-all uppercase tracking-tight">Reconnect TPU</button>
+                  </div>
                 </div>
-                <!-- Pass the streaming text and generation state to the component -->
-                <app-why-matters-card 
-                  [relevance]="dashboard.briefingStream" 
-                  [isGenerating]="loading">
-                </app-why-matters-card>
-            </div>
 
-            <!-- Impact Radar Card (Lazy Loaded) -->
-            <div class="lg:col-span-2 relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-6">
-                 <div *ngIf="!dashboard.impact" class="absolute inset-0 flex items-center justify-center bg-slate-900/40 z-10 backdrop-blur-sm">
-                    <button (click)="loadImpact()" class="px-6 py-2 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-full hover:bg-emerald-500/30 transition-all font-medium">
-                       Analyze Market Impact
-                    </button>
-                 </div>
-                 <app-impact-radar-card [impact]="dashboard.impact"></app-impact-radar-card>
-            </div>
+                <div class="flex-shrink-0 w-full md:w-auto">
+                  <div class="bg-surface-container-low p-4 border border-outline-variant/20">
+                    <div class="text-[0.625rem] text-primary-container/50 font-mono uppercase mb-2 tracking-tighter">AI Pulse Check</div>
+                    <div class="flex items-end gap-2">
+                       <span class="text-3xl font-mono text-secondary-container leading-none" [class.animate-pulse]="loading">
+                          {{ loading ? '...' : '94%' }}
+                       </span>
+                       <span class="text-xs font-mono text-secondary-container pb-1 uppercase">
+                          {{ loading ? 'Computing' : 'Bullish' }}
+                       </span>
+                    </div>
+                    <div class="mt-4 flex gap-1 h-1">
+                      <div class="w-12 h-full bg-secondary-container"></div>
+                      <div class="w-8 h-full bg-secondary-container"></div>
+                      <div class="w-10 h-full bg-secondary-container/40"></div>
+                      <div class="w-4 h-full bg-secondary-container/10"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-            <!-- Contrarian Card (Lazy Loaded) -->
-            <div class="relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-6">
-                 <div *ngIf="!dashboard.opinions" class="absolute inset-0 flex items-center justify-center bg-slate-900/40 z-10 backdrop-blur-sm">
-                    <button (click)="loadOpinions()" class="px-6 py-2 bg-orange-500/20 border border-orange-500/40 text-orange-400 rounded-full hover:bg-orange-500/30 transition-all font-medium">
-                       Compute Bull/Bear Sentiment
-                    </button>
-                 </div>
-                 <app-contrarian-card [opinions]="dashboard.opinions"></app-contrarian-card>
-            </div>
-            
-            <!-- Story Arc (Lazy Loaded) -->
-            <div class="lg:col-span-3 relative min-h-[300px] bg-slate-900/50 rounded-xl border border-slate-800 overflow-hidden p-6">
-                <div *ngIf="!dashboard.timeline" class="absolute inset-0 flex items-center justify-center bg-slate-900/40 z-10 backdrop-blur-sm">
-                    <button (click)="loadTimeline()" class="px-6 py-2 bg-purple-500/20 border border-purple-500/40 text-purple-400 rounded-full hover:bg-purple-500/30 transition-all font-medium">
-                       Trace Story Arc Timeline
-                    </button>
-                 </div>
+            <!-- Middle Row - Left: Impact Radar -->
+            <section class="lg:col-span-4 bg-surface-container-lowest p-6 flex flex-col border border-outline-variant/10">
+              <div class="flex justify-between items-center mb-6">
+                <h2 class="font-headline text-xl font-bold text-primary">Impact Radar</h2>
+                <span class="font-mono text-[0.65rem] text-secondary-container border border-secondary-container/20 px-2 py-0.5" 
+                      [class.animate-pulse]="dashboard.impact?.loading">
+                  {{ dashboard.impact?.loading ? 'GENERATING...' : 'LIVE ANALYSIS' }}
+                </span>
+              </div>
+              
+              <div class="flex-1 relative min-h-[300px]">
+                <div *ngIf="!dashboard.impact" class="absolute inset-0 flex items-center justify-center bg-surface-container-lowest/40 z-10 backdrop-blur-sm">
+                   <button (click)="loadImpact()" class="px-6 py-2 bg-secondary-container/10 border border-secondary-container/30 text-secondary-container rounded-sm hover:bg-secondary-container/20 transition-all font-bold text-xs uppercase tracking-widest">
+                      Initialize Radar
+                   </button>
+                </div>
+                <app-impact-radar-card [impact]="dashboard.impact"></app-impact-radar-card>
+              </div>
+            </section>
+
+            <!-- Middle Row - Center: Contrarian Opinions -->
+            <section class="lg:col-span-4 bg-surface-container-low p-6 flex flex-col border border-outline-variant/10">
+              <div class="flex items-center gap-2 mb-6">
+                <span class="material-symbols-outlined text-primary text-lg">psychology_alt</span>
+                <h2 class="font-headline text-xl font-bold text-on-surface">Contrarian Views</h2>
+              </div>
+              
+              <div class="flex-1 relative min-h-[300px]">
+                <div *ngIf="!dashboard.opinions" class="absolute inset-0 flex items-center justify-center bg-surface-container-low/40 z-10 backdrop-blur-sm">
+                   <button (click)="loadOpinions()" class="px-6 py-2 bg-primary-container/10 border border-primary-container/30 text-primary-container rounded-sm hover:bg-primary-container/20 transition-all font-bold text-xs uppercase tracking-widest">
+                      Compute Dilemma
+                   </button>
+                </div>
+                <app-contrarian-card [opinions]="dashboard.opinions"></app-contrarian-card>
+              </div>
+            </section>
+
+            <!-- Middle Row - Right: Story Arc -->
+            <section class="lg:col-span-4 bg-surface-container-lowest p-6 border border-outline-variant/10">
+               <div class="flex justify-between items-center mb-6">
+                <h2 class="font-headline text-xl font-bold text-on-surface">Narrative Arc</h2>
+                <button (click)="loadTimeline()" class="text-xs font-mono text-primary-container hover:text-primary transition-colors uppercase underline decoration-primary-container/30">
+                  Trace Timeline
+                </button>
+              </div>
+              
+              <div class="relative min-h-[300px]">
+                <div *ngIf="!dashboard.timeline" class="absolute inset-0 flex items-center justify-center bg-surface-container-lowest/40 z-10 backdrop-blur-sm">
+                   <span class="text-[0.65rem] font-mono text-primary-container/40 uppercase">AWAITING SEQUENCE...</span>
+                </div>
                 <app-story-arc [timeline]="dashboard.timeline"></app-story-arc>
+              </div>
+            </section>
+
+          </div>
+        </main>
+
+        <!-- Live Market Ticker -->
+        <footer class="fixed bottom-0 left-0 w-full z-50 flex items-center overflow-hidden whitespace-nowrap bg-surface-container-lowest/90 backdrop-blur-md h-8 border-t border-primary-container/20 shadow-[0_-4px_12px_rgba(242,202,80,0.05)]">
+          <div class="ticker-animate flex gap-12 items-center">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">S&P 500</span>
+              <span class="material-symbols-outlined text-[14px] text-secondary-container">trending_up</span>
+              <span class="font-mono text-[0.65rem] tracking-tighter text-secondary-container">5,421.22 (+1.2%)</span>
             </div>
-
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">NASDAQ</span>
+              <span class="material-symbols-outlined text-[14px] text-secondary-container">trending_up</span>
+              <span class="font-mono text-[0.65rem] tracking-tighter text-secondary-container">16,428.10 (+1.8%)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">BTC/USD</span>
+              <span class="material-symbols-outlined text-[14px] text-tertiary-container">trending_down</span>
+              <span class="font-mono text-[0.65rem] tracking-tighter text-tertiary-container">71,402.50 (-0.4%)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">GOLD</span>
+              <span class="material-symbols-outlined text-[14px] text-secondary-container">trending_up</span>
+              <span class="font-mono text-[0.65rem] tracking-tighter text-secondary-container">2,354.10 (+0.8%)</span>
+            </div>
+            <!-- Repeated for seamless loop -->
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">S&P 500</span>
+              <span class="material-symbols-outlined text-[14px] text-secondary-container">trending_up</span>
+              <span class="font-mono text-[0.65rem] tracking-tighter text-secondary-container">5,421.22 (+1.2%)</span>
+            </div>
           </div>
-
-          <!-- Error Feedback -->
-          <div *ngIf="error" class="mt-8 p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm">
-             ⚠️ <b>Streaming Error:</b> {{ error }}
-             <button (click)="initiateStreamingBriefing()" class="underline ml-2">Reconnect to TPU Core</button>
-          </div>
-
-        </div>
+        </footer>
       </div>
     </div>
   `,
