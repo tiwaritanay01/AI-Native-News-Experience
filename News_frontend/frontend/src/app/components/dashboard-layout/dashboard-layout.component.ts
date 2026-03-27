@@ -33,18 +33,29 @@ import { Subscription } from 'rxjs';
         <!-- TopAppBar -->
         <header class="sticky top-0 w-full z-40 flex justify-between items-center px-6 h-14 bg-background/80 backdrop-blur-xl border-b border-primary-container/15">
           <div class="flex items-center gap-8 flex-1">
-            <span class="font-headline text-2xl italic text-primary">Aureum Terminal</span>
-            <div class="relative w-96 max-w-md hidden md:block">
+            <span class="font-headline text-2xl italic text-primary select-none cursor-default group transition-all">
+              Aureum <span class="group-hover:text-on-surface transition-colors">Terminal</span>
+            </span>
+            
+            <!-- Live System Status -->
+            <div class="flex items-center gap-2 px-3 py-1 bg-secondary-container/10 border border-secondary-container/20 rounded-full">
+               <div class="w-1.5 h-1.5 rounded-full bg-secondary-container" [class.animate-pulse]="loading"></div>
+               <span class="text-[0.6rem] font-mono text-secondary-container uppercase tracking-widest select-none">
+                 JAX Signal: {{ loading ? 'Synchronizing' : 'Stable' }}
+               </span>
+            </div>
+
+            <div class="relative w-96 max-w-md hidden md:block ml-4">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary-container/40 text-sm font-light">search</span>
-              <input class="w-full bg-white/5 border-none focus:ring-1 focus:ring-primary text-sm py-1.5 pl-10 text-on-surface placeholder:text-primary-container/30" 
+              <input class="w-full bg-white/5 border-none focus:ring-1 focus:ring-primary text-sm py-1.5 pl-10 text-on-surface placeholder:text-primary-container/30 transition-all focus:bg-white/10" 
                      placeholder="Search markets, news, or sectors..." type="text"/>
             </div>
           </div>
           <div class="flex items-center gap-6">
             <div class="flex gap-4">
-              <button class="text-primary-container/60 hover:text-primary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
-              <button class="text-primary-container/60 hover:text-primary transition-colors"><span class="material-symbols-outlined">settings</span></button>
-              <button class="text-primary-container/60 hover:text-primary transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+              <button class="text-primary-container/60 hover:text-primary transition-all hover:scale-110 active:scale-95"><span class="material-symbols-outlined">notifications</span></button>
+              <button class="text-primary-container/60 hover:text-primary transition-all hover:scale-110 active:scale-95"><span class="material-symbols-outlined">settings</span></button>
+              <button class="text-primary-container/60 hover:text-primary transition-all hover:scale-110 active:scale-95"><span class="material-symbols-outlined">account_circle</span></button>
             </div>
           </div>
         </header>
@@ -157,6 +168,30 @@ import { Subscription } from 'rxjs';
               </div>
             </section>
 
+          </div>
+
+          <!-- Terminal Feedback Console -->
+          <div class="mt-12 pt-6 border-t border-outline-variant/10 flex items-center justify-between opacity-30 hover:opacity-100 transition-all duration-500 select-none group">
+            <div class="flex items-center gap-6">
+              <span class="text-[0.625rem] font-mono text-primary uppercase tracking-[0.3em] font-bold">Terminal Feedback</span>
+              <div class="flex gap-6 font-mono text-[0.55rem] uppercase text-primary-container/60">
+                <span class="flex items-center gap-2 group-hover:text-on-surface transition-colors">
+                  <div class="w-1 h-1 rounded-full bg-secondary-container" [class.animate-ping]="loading"></div>
+                  Neural_Briefing: {{ loading ? 'Syncing...' : 'Active' }}
+                </span>
+                <span class="flex items-center gap-2 group-hover:text-on-surface transition-colors">
+                  <div class="w-1 h-1 rounded-full bg-secondary-container"></div>
+                  Hardware_Engine: {{ (error ? 'Signal_Lost' : 'Hybrid_v2') }}
+                </span>
+                <span class="flex items-center gap-2 group-hover:text-on-surface transition-colors">
+                  <div class="w-1 h-1 rounded-full bg-secondary-container"></div>
+                  Entropy_Level: 0.042
+                </span>
+              </div>
+            </div>
+            <div class="text-[0.55rem] font-mono text-primary-container/30 uppercase italic">
+              Aureum-OS // Build_2026.03.27
+            </div>
           </div>
         </main>
 
