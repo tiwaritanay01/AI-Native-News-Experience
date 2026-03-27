@@ -77,7 +77,7 @@ import { Subscription } from 'rxjs';
                     <div class="h-px flex-1 bg-on-secondary-container/20"></div>
                   </div>
                   
-                  <app-hero-card></app-hero-card>
+                  <app-hero-card [story]="topStory" [loading]="loading"></app-hero-card>
 
                   <div class="mt-8">
                      <app-why-matters-card 
@@ -232,6 +232,7 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
   cdr = inject(ChangeDetectorRef);
 
   clusterId!: number;
+  topStory: any = null;
   dashboard: any = {
       briefingStream: '',
       impact: null,
@@ -258,6 +259,7 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
     this.loadTicker();
     this.tickerInterval = setInterval(() => this.loadTicker(), 60000); // Sync every minute
 
+    this.loadTopStory();
     this.initiateStreamingBriefing();
   }
 
@@ -282,6 +284,18 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => console.error("Market Ticker Sync Failed:", err)
+    });
+  }
+
+  loadTopStory() {
+    this.news.getStoryOfDay().subscribe({
+      next: (res) => {
+        this.topStory = res;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Top Story Load Failed:", err);
+      }
     });
   }
 

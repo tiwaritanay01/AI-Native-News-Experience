@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NewsService } from '../../services/news.service';
 
@@ -6,6 +6,7 @@ import { NewsService } from '../../services/news.service';
   selector: 'app-hero-card',
   standalone: true,
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div *ngIf="story" class="hero-content">
       <h1 class="font-headline text-5xl md:text-7xl font-extrabold italic text-on-surface leading-tight tracking-tighter mb-4 uppercase">
@@ -28,21 +29,13 @@ import { NewsService } from '../../services/news.service';
   `]
 })
 export class HeroCardComponent implements OnInit {
-  story: any;
-  loading = true;
+  @Input() story: any;
+  @Input() loading = false;
 
-  constructor(private news: NewsService) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.news.getStoryOfDay().subscribe({
-      next: (data: any) => {
-        this.story = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Failed to load story of the day', err);
-        this.loading = false;
-      }
-    });
+    // Manually trigger detection if story is passed in late
+    this.cdr.detectChanges();
   }
 }
