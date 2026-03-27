@@ -88,4 +88,9 @@ export class NewsService {
     return this.http.get<any>(`${this.api}/api/story/${clusterId}/translate?lang=${lang}`, { headers: this.headers });
   }
 
+  getMarketTicker(): Observable<any> {
+    if (!this.isBrowser()) return of(null);
+    return this.http.get<any>(`${this.api}/api/market/ticker`, { headers: this.headers });
+  }
+
 }

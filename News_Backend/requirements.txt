@@ -33,6 +33,8 @@ zipp
 
 # ─── New Services ──────────────────────────────────────
 google-generativeai
+yfinance
+groq
 
 # ─── NOTE: Hardware-specific packages ─────────────────
 # These are installed conditionally in the Colab script:

@@ -198,31 +198,24 @@ import { Subscription } from 'rxjs';
         <!-- Live Market Ticker -->
         <footer class="fixed bottom-0 left-0 w-full z-50 flex items-center overflow-hidden whitespace-nowrap bg-surface-container-lowest/90 backdrop-blur-md h-8 border-t border-primary-container/20 shadow-[0_-4px_12px_rgba(242,202,80,0.05)]">
           <div class="ticker-animate flex gap-12 items-center">
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">S&P 500</span>
-              <span class="material-symbols-outlined text-[14px] text-secondary-container">trending_up</span>
-              <span class="font-mono text-[0.65rem] tracking-tighter text-secondary-container">5,421.22 (+1.2%)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">NASDAQ</span>
-              <span class="material-symbols-outlined text-[14px] text-secondary-container">trending_up</span>
-              <span class="font-mono text-[0.65rem] tracking-tighter text-secondary-container">16,428.10 (+1.8%)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">BTC/USD</span>
-              <span class="material-symbols-outlined text-[14px] text-tertiary-container">trending_down</span>
-              <span class="font-mono text-[0.65rem] tracking-tighter text-tertiary-container">71,402.50 (-0.4%)</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">GOLD</span>
-              <span class="material-symbols-outlined text-[14px] text-secondary-container">trending_up</span>
-              <span class="font-mono text-[0.65rem] tracking-tighter text-secondary-container">2,354.10 (+0.8%)</span>
+            <div *ngFor="let item of tickerData" class="flex items-center gap-2">
+              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">{{ item.id }}</span>
+              <span class="material-symbols-outlined text-[14px]" [ngClass]="item.trend === 'up' ? 'text-secondary-container' : 'text-tertiary-container'">
+                {{ item.trend === 'up' ? 'trending_up' : 'trending_down' }}
+              </span>
+              <span class="font-mono text-[0.65rem] tracking-tighter" [ngClass]="item.trend === 'up' ? 'text-secondary-container' : 'text-tertiary-container'">
+                {{ item.price | number:'1.2-2' }} ({{ item.change > 0 ? '+' : '' }}{{ item.change }}%)
+              </span>
             </div>
             <!-- Repeated for seamless loop -->
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">S&P 500</span>
-              <span class="material-symbols-outlined text-[14px] text-secondary-container">trending_up</span>
-              <span class="font-mono text-[0.65rem] tracking-tighter text-secondary-container">5,421.22 (+1.2%)</span>
+            <div *ngFor="let item of tickerData" class="flex items-center gap-2">
+              <span class="font-mono text-[0.65rem] tracking-tighter text-on-surface-variant uppercase">{{ item.id }}</span>
+              <span class="material-symbols-outlined text-[14px]" [ngClass]="item.trend === 'up' ? 'text-secondary-container' : 'text-tertiary-container'">
+                {{ item.trend === 'up' ? 'trending_up' : 'trending_down' }}
+              </span>
+              <span class="font-mono text-[0.65rem] tracking-tighter" [ngClass]="item.trend === 'up' ? 'text-secondary-container' : 'text-tertiary-container'">
+                {{ item.price | number:'1.2-2' }} ({{ item.change > 0 ? '+' : '' }}{{ item.change }}%)
+              </span>
             </div>
           </div>
         </footer>
@@ -248,7 +241,9 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
   loading = false;
   error: string | null = null;
   currentTime = '';
+  tickerData: any[] = [];
   private clockInterval: any;
+  private tickerInterval: any;
   private streamSub?: Subscription;
 
   ngOnInit() {
@@ -259,17 +254,34 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
         hour: '2-digit', minute: '2-digit', second: '2-digit'
       });
     }, 1000);
+
+    this.loadTicker();
+    this.tickerInterval = setInterval(() => this.loadTicker(), 60000); // Sync every minute
+
     this.initiateStreamingBriefing();
   }
 
   ngOnDestroy() {
     if (this.clockInterval) clearInterval(this.clockInterval);
+    if (this.tickerInterval) clearInterval(this.tickerInterval);
     if (this.streamSub) this.streamSub.unsubscribe();
   }
 
   private updateClock() {
     this.currentTime = new Date().toLocaleTimeString('en-US', {
       hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+  }
+
+  loadTicker() {
+    this.news.getMarketTicker().subscribe({
+      next: (res) => {
+        if (res) {
+          this.tickerData = res;
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => console.error("Market Ticker Sync Failed:", err)
     });
   }
 
@@ -281,13 +293,11 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
     this.streamSub = this.streamer.streamAgentResponse(this.clusterId, 'Generate a real-time news briefing.')
       .subscribe({
         next: (chunk) => {
-          console.log('📡 TPU Token:', chunk);
           if (chunk === '[START]') {
             this.dashboard.briefingStream = '';
           } else {
             this.dashboard.briefingStream += chunk;
           }
-          // CRITICAL: Force Angular change detection on each token
           this.cdr.detectChanges();
         },
         error: (err) => {

@@ -20,6 +20,7 @@ from app.api.story_routes import router as story_router
 # New Engines
 from app.services.video_service import video_service
 from app.services.translation_service import translation_service
+from app.services.market_service import market_service
 
 app = FastAPI()
 
@@ -104,6 +105,11 @@ def translate_story(cluster_id: int, lang: Optional[str] = "Hindi"):
         "original": summary[:100] + "...",
         "translated": translation_service.translate(summary, lang)
     }
+
+@app.get("/api/market/ticker")
+def get_market_ticker():
+    """Fetches real-time Bloomberg-style market tickers using yfinance."""
+    return market_service.get_live_ticker()
 
 @app.get("/")
 def home():

@@ -16,8 +16,7 @@ from app.services.hardware_engine import initialize_engine, get_hardware_type
 
 # 3. Initialize the Hardware Abstraction Layer on module load
 #    This probes for TPU → GPU → CPU → Mock automatically
-import os
-MODEL_NAME = os.environ.get("MODEL_NAME", "google/gemma-2b")
+MODEL_NAME = os.environ.get("MODEL_NAME", "TinyLlama/TinyLlama-1.1B-Chat-v1.0")
 initialize_engine(MODEL_NAME)
 
 # 4. High-Performance SSE Event Generator

@@ -5,19 +5,17 @@ Priority: Gemini API (highest quality) → TPU (fast local) → GPU → CPU → 
 """
 import os
 import sys
+import json
 import asyncio
 import google.generativeai as genai
+from groq import Groq
 
 # ─── Global State ───────────────────────────────────────────────────
-_engine = None          # Will hold the initialized model/tokenizer/device or Gemini client
-_hardware_type = "MOCK" # "GEMINI", "TPU", "CUDA", "CPU", or "MOCK"
+_engine = None          # Will hold the initialized model/tokenizer/device or Gemini client or Groq
+_hardware_type = "MOCK" # "GEMINI", "GROQ", "TPU", "CUDA", "CPU", or "MOCK"
 
 # ─── Detect & Initialize ───────────────────────────────────────────
-def initialize_engine(model_name: str = "google/gemma-2b"):
-    """
-    Probes the runtime environment and loads the model on the best 
-    available hardware. Called ONCE at server startup.
-    """
+def initialize_engine(model_name: str = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"):
     global _engine, _hardware_type
 
     # ── 1. Check for Gemini API Key (User Preferred for 'Humanized' data) ──
@@ -26,14 +24,29 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
         try:
             print("💎 Probing for Gemini API...")
             genai.configure(api_key=gemini_key)
-            # Use 'gemini-1.5-flash' for speed, or 'gemini-1.5-pro' for depth
             model = genai.GenerativeModel('gemini-1.5-flash')
+            # Test prompt to ensure key is valid
+            model.generate_content("ping")
             _engine = {"model": model}
             _hardware_type = "GEMINI"
-            print("🚀 GEMINI API ACTIVE — Quality: Human-Level")
+            print("🚀 GEMINI API ACTIVE — Quality: Human-Level (Gemini 1.5 Flash)")
             return
         except Exception as e:
             print(f"⚠️  Gemini init failed: {e}")
+
+    # ── 2. Check for Groq API Key (High Speed LPU Inference) ────────────────
+    groq_key = os.getenv("GROQ_API_KEY")
+    if groq_key:
+        try:
+            print("⚡ Probing for Groq LPU...")
+            client = Groq(api_key=groq_key)
+            # Use Llama3-8b for speed & quality balance
+            _engine = {"client": client, "model": "llama3-8b-8192"}
+            _hardware_type = "GROQ"
+            print("🚀 GROQ LPU ACTIVE — Speed: Ultra-Fast (Llama 3)")
+            return
+        except Exception as e:
+            print(f"⚠️  Groq init failed: {e}")
 
     # ── 2. Try Google TPU via torch_xla ────────────────────────────
     try:
@@ -43,6 +56,7 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
 
         print("🔍 Probing for TPU hardware...")
         device = xm.xla_device()
+        print(f"📦 Loading local model {model_name} on TPU...")
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         model = AutoModelForCausalLM.from_pretrained(model_name)
         model = model.to(device)
@@ -53,7 +67,7 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
         return
 
     except Exception as e:
-        print(f"⚠️  TPU not available: {e}")
+        print(f"⚠️  TPU not available or failed: {str(e)[:100]}")
 
     # ── 3. Try NVIDIA CUDA GPU (T4 / A100 / etc.) ─────────────────
     try:
@@ -77,7 +91,7 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
             return
 
     except Exception as e:
-        print(f"⚠️  CUDA GPU not available: {e}")
+        print(f"⚠️  CUDA GPU not available: {str(e)[:100]}")
 
     # ── 4. CPU Fallback (very slow, but works) ─────────────────────
     try:
@@ -95,7 +109,7 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
         return
 
     except Exception as e:
-        print(f"⚠️  CPU model load failed: {e}")
+        print(f"⚠️  CPU model load failed: {str(e)[:100]}")
 
     # ── 5. Mock Fallback (no model, simulated output) ──────────────
     _engine = None
@@ -104,31 +118,36 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
 
 
 def get_hardware_type() -> str:
-    """Returns the active hardware type string."""
     return _hardware_type
 
 
 def get_engine():
-    """Returns the initialized engine dict or None."""
     return _engine
 
 
 # ─── Synchronous Generation (for legacy agent calls) ──────────────
 def generate_response(prompt: str, max_new_tokens: int = 256) -> str:
-    """
-    Synchronous text generation.
-    """
     global _engine, _hardware_type
 
     if _hardware_type == "GEMINI":
         try:
             model = _engine["model"]
-            # Humanizing prompt wrapper
-            humanized_prompt = f"Humanize this news data and provide a concise briefing:\n{prompt}"
-            response = model.generate_content(humanized_prompt)
+            response = model.generate_content(prompt)
             return response.text.strip()
         except Exception as e:
             print(f"❌ Gemini generation error: {e}")
+            return _generate_mock_response(prompt)
+
+    if _hardware_type == "GROQ":
+        try:
+            client = _engine["client"]
+            response = client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model=_engine["model"],
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            print(f"❌ Groq generation error: {e}")
             return _generate_mock_response(prompt)
 
     if _hardware_type == "MOCK" or _engine is None:
@@ -165,16 +184,12 @@ def generate_response(prompt: str, max_new_tokens: int = 256) -> str:
 
 # ─── Async Streaming Generation (for SSE/frontend) ────────────────
 async def stream_tokens(prompt: str, max_new_tokens: int = 256):
-    """
-    Async generator that yields tokens one-by-one for SSE streaming.
-    """
     global _engine, _hardware_type
 
     if _hardware_type == "GEMINI":
         try:
             model = _engine["model"]
-            humanized_prompt = f"Humanize this news briefing and provide insight:\n{prompt}"
-            response = model.generate_content(humanized_prompt, stream=True)
+            response = model.generate_content(prompt, stream=True)
             for chunk in response:
                 if chunk.text:
                     yield chunk.text
@@ -182,6 +197,25 @@ async def stream_tokens(prompt: str, max_new_tokens: int = 256):
             return
         except Exception as e:
             print(f"❌ Gemini streaming error: {e}")
+            async for token in _stream_mock_tokens(prompt):
+                yield token
+            return
+
+    if _hardware_type == "GROQ":
+        try:
+            client = _engine["client"]
+            stream = client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model=_engine["model"],
+                stream=True,
+            )
+            for chunk in stream:
+                if chunk.choices[0].delta.content:
+                    yield chunk.choices[0].delta.content
+                await asyncio.sleep(0.01)
+            return
+        except Exception as e:
+            print(f"❌ Groq streaming error: {e}")
             async for token in _stream_mock_tokens(prompt):
                 yield token
             return
@@ -228,14 +262,30 @@ async def stream_tokens(prompt: str, max_new_tokens: int = 256):
 
 # ─── Mock Fallback Generators ─────────────────────────────────────
 def _generate_mock_response(prompt: str) -> str:
-    return (
-        "AI-Native Terminal Hub: Standardizing news story arcs. "
-        "The current volatility metrics indicate a stabilization in tech sectors."
-    )
+    # If the system expects JSON, return a valid JSON Mock
+    if "JSON" in prompt:
+         return json.dumps({
+            "headline": "Aureum Signal Sync: Stable Intelligence Flow",
+            "summary": "The intelligent news clusters have been successfully localized. Market volatility remains within calculated parameters.",
+            "why_matters": ["Neural stabilization achieved", "Cross-sector data validated"],
+            "sentiment": "NEUTRAL",
+            "sectors": ["Global Tech", "Macro Finance"],
+            "radar": { "bullish": 0.6, "bearish": 0.1, "interest": 0.9 }
+        })
+    
+    return "Aureum Signal: Standardizing news story arcs. Neural clusters active."
 
 
 async def _stream_mock_tokens(prompt: str):
-    tokens = [" Connecting", " to", " AI", " Intelligence", " Core...", " Done.", " Deciphering", " story", " impact."]
-    for token in tokens:
-        yield token
-        await asyncio.sleep(0.04)
+    # Detect if we should stream JSON or text
+    if "JSON" in prompt:
+        text = _generate_mock_response(prompt)
+        words = text.split()
+        for word in words:
+            yield f" {word}"
+            await asyncio.sleep(0.02)
+    else:
+        tokens = [" Connecting", " to", " AI", " Intelligence", " Core...", " Done.", " Deciphering", " story", " impact."]
+        for token in tokens:
+            yield token
+            await asyncio.sleep(0.04)
