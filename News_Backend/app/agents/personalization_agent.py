@@ -1,5 +1,5 @@
 from app.services.story_cluster import cluster_stories
-import ollama
+from app.services.llm_service import generate_llm_response
 
 
 def get_personalized_feed(user_profile):
@@ -27,14 +27,11 @@ News:
 {text}
 """
 
-        response = ollama.chat(
-            model="llama3",
-            messages=[{"role": "user", "content": prompt}]
-        )
+        response = generate_llm_response(prompt)
 
         stories.append({
             "cluster_id": cluster_id,
-            "analysis": response["message"]["content"]
+            "analysis": response
         })
 
-    return stories
+    return stories

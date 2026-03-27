@@ -1,5 +1,5 @@
 from app.services.story_cluster import cluster_stories
-import ollama
+from app.services.llm_service import generate_llm_response
 
 
 def explain_relevance(cluster_id, user_profile):
@@ -22,13 +22,10 @@ Story:
 Return concise bullet points.
 """
 
-    response = ollama.chat(
-        model="llama3",
-        messages=[{"role": "user", "content": prompt}]
-    )
+    response = generate_llm_response(prompt)
 
     return {
         "cluster_id": cluster_id,
         "user_profile": user_profile,
-        "explanation": response["message"]["content"]
-    }
+        "explanation": response
+    }

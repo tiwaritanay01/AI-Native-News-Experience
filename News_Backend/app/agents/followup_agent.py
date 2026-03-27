@@ -1,6 +1,17 @@
-import ollama
+from app.services.llm_service import generate_llm_response
+from app.services.story_cluster import cluster_stories
 
-def generate_followup_questions(text: str):
+
+def generate_followup_questions(cluster_id_or_text):
+    if isinstance(cluster_id_or_text, int):
+        clusters = cluster_stories()
+        articles = clusters.get(cluster_id_or_text, [])
+        if not articles:
+             return ["What more can you tell me?", "What are the next steps?", "Is there any related news?"]
+        text = "\n\n".join(articles[:3])
+    else:
+        text = cluster_id_or_text
+
     prompt = f"""
     You are a news analyst.
 
@@ -13,9 +24,4 @@ def generate_followup_questions(text: str):
     Return only the questions as a list.
     """
 
-    response = ollama.chat(
-        model="llama3",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response["message"]["content"]
+    return generate_llm_response(prompt)
