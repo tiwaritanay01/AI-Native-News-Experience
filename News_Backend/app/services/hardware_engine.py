@@ -24,7 +24,7 @@ def initialize_engine(model_name: str = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"):
         try:
             print("💎 Probing for Gemini API...")
             genai.configure(api_key=gemini_key)
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-1.5-flash-latest')
             # Test prompt to ensure key is valid
             model.generate_content("ping")
             _engine = {"model": model}
@@ -40,10 +40,10 @@ def initialize_engine(model_name: str = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"):
         try:
             print("⚡ Probing for Groq LPU...")
             client = Groq(api_key=groq_key)
-            # Use Llama3-8b for speed & quality balance
-            _engine = {"client": client, "model": "llama3-8b-8192"}
+            # Use Llama-3.3-70b-versatile (Current high-performance versatile model)
+            _engine = {"client": client, "model": "llama-3.3-70b-versatile"}
             _hardware_type = "GROQ"
-            print("🚀 GROQ LPU ACTIVE — Speed: Ultra-Fast (Llama 3)")
+            print("🚀 GROQ LPU ACTIVE — Speed: Ultra-Fast (Llama 3.3)")
             return
         except Exception as e:
             print(f"⚠️  Groq init failed: {e}")
