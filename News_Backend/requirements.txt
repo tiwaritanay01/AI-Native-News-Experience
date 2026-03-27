@@ -31,6 +31,9 @@ tqdm
 gitpython
 zipp
 
+# ─── New Services ──────────────────────────────────────
+google-generativeai
+
 # ─── NOTE: Hardware-specific packages ─────────────────
 # These are installed conditionally in the Colab script:
 #   TPU: jax[tpu], torch_xla

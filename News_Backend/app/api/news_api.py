@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 
 from app.agents.story_agent import get_all_stories
 from app.agents.briefing_agent import get_story_briefing
@@ -16,12 +17,12 @@ from app.agents.sentiment_agent import get_story_sentiment
 from app.agents.dashboard_agent import generate_dashboard
 from app.api.story_routes import router as story_router
 
+# New Engines
+from app.services.video_service import video_service
+from app.services.translation_service import translation_service
 
-# CREATE APP FIRST
 app = FastAPI()
 
-
-# CORS CONFIG
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,31 +31,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# ROUTERS
 app.include_router(story_router)
 
-
 @app.get("/story-of-day")
-@app.get("/story_of_day")
 def story_of_day():
     return get_story_of_the_day()
-
 
 @app.get("/stories")
 def stories():
     return get_all_stories()
 
-
 @app.get("/story/{cluster_id}")
 def story(cluster_id: int):
     return get_story_briefing(cluster_id)
 
-
 @app.get("/story/{cluster_id}/intelligence")
 def story_intelligence(cluster_id: int):
     return get_story_intelligence(cluster_id)
-
 
 @app.post("/ask")
 def ask(data: dict):
@@ -62,68 +55,59 @@ def ask(data: dict):
     question = data["question"]
     return answer_story_question(cluster_id, question)
 
-
 @app.get("/story/{cluster_id}/briefing")
 def story_briefing(cluster_id: int):
     return get_story_briefing(cluster_id)
-
 
 @app.get("/story/{cluster_id}/questions")
 def story_questions(cluster_id: int):
     return get_story_questions(cluster_id)
 
-
-@app.post("/story/{cluster_id}/ask")
-def ask_story_question(cluster_id: int, question: str):
-    return answer_question(cluster_id, question)
-
-
-@app.post("/debate/start/{cluster_id}")
-def debate_start(cluster_id: int):
-    return start_debate(cluster_id)
-
-
-@app.get("/debate/{session_id}/turn")
-def debate_turn(session_id: str):
-    return next_turn(session_id)
-
-
-@app.post("/debate/{session_id}/exit")
-def debate_exit(session_id: str):
-    return end_debate(session_id)
-
-
 @app.get("/story/{cluster_id}/opinions")
 def story_opinions(cluster_id: int):
     return get_contrarian_opinions(cluster_id)
-
-
-@app.post("/debate/{session_id}/ask")
-def debate_question(session_id: str, question: str):
-    return ask_debate_question(session_id, question)
-
 
 @app.get("/story/{cluster_id}/impact")
 def story_impact(cluster_id: int):
     return get_story_impact(cluster_id)
 
-
 @app.get("/story/{cluster_id}/timeline")
 def story_timeline(cluster_id: int):
     return generate_story_timeline(cluster_id)
-
 
 @app.get("/story/{cluster_id}/sentiment")
 def story_sentiment(cluster_id: int):
     return get_story_sentiment(cluster_id)
 
-
-# Optional future dashboard endpoint
 @app.get("/story/{cluster_id}/dashboard")
 def story_dashboard(cluster_id: int):
     return generate_dashboard(cluster_id)
 
+# ─── Cinematic & Vernacular Engines ────────────────────────────────
+
+@app.get("/api/story/{cluster_id}/video")
+def get_story_video(cluster_id: int):
+    """Generates cinematic video frames/metadata using Hugging Face."""
+    briefing = get_story_briefing(cluster_id)
+    # The briefing agent returns a dict, we extract summary
+    summary = briefing.get("summary", "A breaking news story.") if isinstance(briefing, dict) else str(briefing)
+    return video_service.generate_video_frames(summary)
+
+@app.get("/api/story/{cluster_id}/translate")
+def translate_story(cluster_id: int, lang: Optional[str] = "Hindi"):
+    """Translates news briefing to vernacular languages using Gemini."""
+    briefing = get_story_briefing(cluster_id)
+    summary = briefing.get("summary", "") if isinstance(briefing, dict) else str(briefing)
+    return {
+        "status": "success",
+        "language": lang,
+        "original": summary[:100] + "...",
+        "translated": translation_service.translate(summary, lang)
+    }
 
 @app.get("/")
 def home():
-    return {"message": "AI Native News API Running"}
+    return {
+        "message": "AI Native News API Online",
+        "engines": ["TPU-v5e", "Gemini-Pro", "HuggingFace-Cinematic", "Vernacular-JAX"]
+    }

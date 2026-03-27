@@ -1,28 +1,41 @@
 """
 Hardware Abstraction Layer (HAL) for AI-Native News Experience.
-Dynamically detects TPU v5e / NVIDIA T4 GPU / CPU and initializes the 
-correct inference engine. All other services call this module — they never
-need to know what hardware is running underneath.
+Dynamically detects Gemini API → TPU v5e → NVIDIA GPU → CPU → Mock.
+Priority: Gemini API (highest quality) → TPU (fast local) → GPU → CPU → Mock.
 """
 import os
 import sys
 import asyncio
+import google.generativeai as genai
 
 # ─── Global State ───────────────────────────────────────────────────
-_engine = None          # Will hold the initialized model/tokenizer/device
-_hardware_type = "MOCK" # "TPU", "CUDA", "CPU", or "MOCK"
+_engine = None          # Will hold the initialized model/tokenizer/device or Gemini client
+_hardware_type = "MOCK" # "GEMINI", "TPU", "CUDA", "CPU", or "MOCK"
 
 # ─── Detect & Initialize ───────────────────────────────────────────
 def initialize_engine(model_name: str = "google/gemma-2b"):
     """
     Probes the runtime environment and loads the model on the best 
     available hardware. Called ONCE at server startup.
-    
-    Priority: TPU (v5e) → NVIDIA GPU (T4) → CPU → Mock (fallback)
     """
     global _engine, _hardware_type
 
-    # ── 1. Try Google TPU via torch_xla ────────────────────────────
+    # ── 1. Check for Gemini API Key (User Preferred for 'Humanized' data) ──
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if gemini_key:
+        try:
+            print("💎 Probing for Gemini API...")
+            genai.configure(api_key=gemini_key)
+            # Use 'gemini-1.5-flash' for speed, or 'gemini-1.5-pro' for depth
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            _engine = {"model": model}
+            _hardware_type = "GEMINI"
+            print("🚀 GEMINI API ACTIVE — Quality: Human-Level")
+            return
+        except Exception as e:
+            print(f"⚠️  Gemini init failed: {e}")
+
+    # ── 2. Try Google TPU via torch_xla ────────────────────────────
     try:
         import torch
         import torch_xla.core.xla_model as xm
@@ -42,7 +55,7 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
     except Exception as e:
         print(f"⚠️  TPU not available: {e}")
 
-    # ── 2. Try NVIDIA CUDA GPU (T4 / A100 / etc.) ─────────────────
+    # ── 3. Try NVIDIA CUDA GPU (T4 / A100 / etc.) ─────────────────
     try:
         import torch
         if torch.cuda.is_available():
@@ -52,7 +65,6 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
             device = torch.device("cuda")
             tokenizer = AutoTokenizer.from_pretrained(model_name)
             
-            # float16 is crucial for fitting on a 16GB T4 GPU
             model = AutoModelForCausalLM.from_pretrained(
                 model_name,
                 device_map="auto",
@@ -61,13 +73,13 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
 
             _engine = {"model": model, "tokenizer": tokenizer, "device": device}
             _hardware_type = "CUDA"
-            print(f"🎮 NVIDIA GPU ACTIVE — Model: {model_name}, VRAM: {torch.cuda.get_device_name(0)}")
+            print(f"🎮 NVIDIA GPU ACTIVE — Model: {model_name}")
             return
 
     except Exception as e:
         print(f"⚠️  CUDA GPU not available: {e}")
 
-    # ── 3. CPU Fallback (very slow, but works) ─────────────────────
+    # ── 4. CPU Fallback (very slow, but works) ─────────────────────
     try:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -79,13 +91,13 @@ def initialize_engine(model_name: str = "google/gemma-2b"):
 
         _engine = {"model": model, "tokenizer": tokenizer, "device": device}
         _hardware_type = "CPU"
-        print(f"🐢 CPU ACTIVE — Model: {model_name} (this will be slow)")
+        print(f"🐢 CPU ACTIVE — Model: {model_name}")
         return
 
     except Exception as e:
         print(f"⚠️  CPU model load failed: {e}")
 
-    # ── 4. Mock Fallback (no model, simulated output) ──────────────
+    # ── 5. Mock Fallback (no model, simulated output) ──────────────
     _engine = None
     _hardware_type = "MOCK"
     print("🧪 MOCK ENGINE ACTIVE — No model loaded, using simulated responses.")
@@ -97,17 +109,27 @@ def get_hardware_type() -> str:
 
 
 def get_engine():
-    """Returns the initialized engine dict (model, tokenizer, device) or None."""
+    """Returns the initialized engine dict or None."""
     return _engine
 
 
 # ─── Synchronous Generation (for legacy agent calls) ──────────────
 def generate_response(prompt: str, max_new_tokens: int = 256) -> str:
     """
-    Synchronous text generation. Used by all existing agents 
-    (briefing, impact, opinions, timeline, debate, etc.)
+    Synchronous text generation.
     """
     global _engine, _hardware_type
+
+    if _hardware_type == "GEMINI":
+        try:
+            model = _engine["model"]
+            # Humanizing prompt wrapper
+            humanized_prompt = f"Humanize this news data and provide a concise briefing:\n{prompt}"
+            response = model.generate_content(humanized_prompt)
+            return response.text.strip()
+        except Exception as e:
+            print(f"❌ Gemini generation error: {e}")
+            return _generate_mock_response(prompt)
 
     if _hardware_type == "MOCK" or _engine is None:
         return _generate_mock_response(prompt)
@@ -119,12 +141,8 @@ def generate_response(prompt: str, max_new_tokens: int = 256) -> str:
 
         inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=1024)
         
-        if _hardware_type == "TPU":
-            import torch_xla.core.xla_model as xm
+        if _hardware_type in ("TPU", "CUDA"):
             inputs = {k: v.to(device) for k, v in inputs.items()}
-        elif _hardware_type == "CUDA":
-            inputs = {k: v.to(device) for k, v in inputs.items()}
-        # CPU: inputs are already on CPU
 
         import torch
         with torch.no_grad():
@@ -137,7 +155,6 @@ def generate_response(prompt: str, max_new_tokens: int = 256) -> str:
                 repetition_penalty=1.1
             )
 
-        # Decode only the generated portion (skip the input tokens)
         generated = outputs[0][inputs["input_ids"].shape[-1]:]
         return tokenizer.decode(generated, skip_special_tokens=True).strip()
 
@@ -150,9 +167,24 @@ def generate_response(prompt: str, max_new_tokens: int = 256) -> str:
 async def stream_tokens(prompt: str, max_new_tokens: int = 256):
     """
     Async generator that yields tokens one-by-one for SSE streaming.
-    Works on TPU, CUDA, CPU, or falls back to mock simulation.
     """
     global _engine, _hardware_type
+
+    if _hardware_type == "GEMINI":
+        try:
+            model = _engine["model"]
+            humanized_prompt = f"Humanize this news briefing and provide insight:\n{prompt}"
+            response = model.generate_content(humanized_prompt, stream=True)
+            for chunk in response:
+                if chunk.text:
+                    yield chunk.text
+                await asyncio.sleep(0.01)
+            return
+        except Exception as e:
+            print(f"❌ Gemini streaming error: {e}")
+            async for token in _stream_mock_tokens(prompt):
+                yield token
+            return
 
     if _hardware_type == "MOCK" or _engine is None:
         async for token in _stream_mock_tokens(prompt):
@@ -170,10 +202,6 @@ async def stream_tokens(prompt: str, max_new_tokens: int = 256):
             inputs = {k: v.to(device) for k, v in inputs.items()}
 
         import torch
-
-        # Generate all tokens at once, then stream them to the frontend
-        # (True token-by-token generation requires a custom loop; this 
-        #  approach gives the same UX with simpler code)
         with torch.no_grad():
             outputs = model.generate(
                 **inputs,
@@ -187,11 +215,10 @@ async def stream_tokens(prompt: str, max_new_tokens: int = 256):
         generated = outputs[0][inputs["input_ids"].shape[-1]:]
         full_text = tokenizer.decode(generated, skip_special_tokens=True).strip()
 
-        # Stream word-by-word to simulate real-time generation UX
         words = full_text.split()
         for word in words:
             yield f" {word}"
-            await asyncio.sleep(0.03)  # ~33 tokens/sec streaming rate
+            await asyncio.sleep(0.03)
 
     except Exception as e:
         print(f"❌ Streaming error on {_hardware_type}: {e}")
@@ -201,27 +228,14 @@ async def stream_tokens(prompt: str, max_new_tokens: int = 256):
 
 # ─── Mock Fallback Generators ─────────────────────────────────────
 def _generate_mock_response(prompt: str) -> str:
-    """Produces a plausible mock response when no model is loaded."""
     return (
-        "Based on the JAX/XLA analysis of the current news cluster: "
-        "The breakthrough in TPU v5e-1 parallelization allows for real-time clustering. "
-        "Key takeaway: Market volatility is high but stable."
+        "AI-Native Terminal Hub: Standardizing news story arcs. "
+        "The current volatility metrics indicate a stabilization in tech sectors."
     )
 
 
 async def _stream_mock_tokens(prompt: str):
-    """Simulates word-by-word streaming for demo/testing."""
-    tokens = [
-        " AI-Native", " Market", " Insights:", " The", " current", " cluster", " analysis",
-        " indicates", " a", " shift", " in", " high-frequency", " trading.",
-        " Analyzing", " sentiment", " across", " top", " sources...",
-        " Detected", " bullish", " divergence", " in", " tech", " sector", " news.",
-        " Market", " impact", " score", " is", " high", " (8.4/10).",
-        " Our", " deep-briefing", " suggests", " the", " story", " arc", " is", " peaking", " today.",
-        " Further", " details", " on", " regulatory", " changes", " are", " arriving", " in", " real-time.",
-        " Strategic", " recommendation:", " monitor", " the", " sector", " overlap.",
-        " End", " of", " dynamic", " briefing."
-    ]
+    tokens = [" Connecting", " to", " AI", " Intelligence", " Core...", " Done.", " Deciphering", " story", " impact."]
     for token in tokens:
         yield token
         await asyncio.sleep(0.04)

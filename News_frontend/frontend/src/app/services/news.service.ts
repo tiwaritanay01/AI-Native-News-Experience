@@ -78,4 +78,14 @@ export class NewsService {
     return this.http.get<any>(`${this.api}/stories`, { headers: this.headers });
   }
 
-}
+  getStoryVideo(clusterId: number): Observable<any> {
+    if (!this.isBrowser()) return of(null);
+    return this.http.get<any>(`${this.api}/api/story/${clusterId}/video`, { headers: this.headers });
+  }
+
+  getStoryTranslation(clusterId: number, lang: string): Observable<any> {
+    if (!this.isBrowser()) return of(null);
+    return this.http.get<any>(`${this.api}/api/story/${clusterId}/translate?lang=${lang}`, { headers: this.headers });
+  }
+
+}

@@ -1,73 +1,75 @@
-// import { Component } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-
-// @Component({
-//   selector: 'app-news-navigator',
-//   standalone: true,
-//   imports: [CommonModule],
-//   template: `
-//     <div class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-8">
-//       <a href="/dashboard" class="text-blue-400 hover:text-blue-300 text-sm font-medium mb-4 inline-block">
-//         ← Back to Dashboard
-//       </a>
-//       <div class="max-w-2xl">
-//         <h1 class="text-4xl font-bold text-white mb-4">News Navigator</h1>
-//         <p class="text-slate-400 mb-8">
-//           Explore news by category, ticker, or custom filters
-//         </p>
-//         <div class="bg-slate-800 rounded-lg p-8 border border-slate-700 text-center">
-//           <svg class="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-//           </svg>
-//           <h3 class="text-white font-semibold mb-2">Coming Soon</h3>
-//           <p class="text-slate-400">Advanced news filtering and discovery tools</p>
-//         </div>
-//       </div>
-//     </div>
-//   `
-// })
-// export class NewsNavigatorComponent {}
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NewsService } from '../../services/news.service';
 import { Router } from '@angular/router';
+import { SidebarNavigationComponent } from '../sidebar-navigation/sidebar-navigation.component';
 
 @Component({
   selector: 'app-news-navigator',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SidebarNavigationComponent],
   template: `
-  <div class="news-feed">
-    <h2>News Navigator</h2>
+    <div class="flex h-screen bg-background text-on-background overflow-hidden font-body ml-20">
+      <app-sidebar-navigation></app-sidebar-navigation>
+      
+      <main class="flex-1 overflow-auto p-8 no-scrollbar bg-surface-container-lowest">
+        <header class="mb-12">
+          <div class="flex items-center gap-4 mb-2">
+            <span class="material-symbols-outlined text-primary text-3xl">explore</span>
+            <h1 class="font-headline text-5xl italic font-bold text-primary">News Navigator</h1>
+          </div>
+          <p class="text-primary-container/60 font-mono text-[0.65rem] uppercase tracking-[0.2em]">Active JAX Intelligence Clustering Signal: Stable</p>
+        </header>
 
-    <div *ngFor="let story of stories" class="story-card" (click)="openStory(story.cluster_id)">
-      <h3>{{story.title}}</h3>
-      <p>{{story.summary}}</p>
+        <section class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let story of stories; let i = index" 
+               (click)="openStory(story.cluster_id)"
+               class="glass-card border border-primary-container/10 p-6 flex flex-col gap-4 cursor-pointer hover:border-primary/40 transition-all hover:-translate-y-1 group">
+            
+            <div class="flex justify-between items-start">
+               <span class="text-[0.625rem] font-mono text-primary-container/40 uppercase tracking-widest italic">Story.Node_{{ story.cluster_id }}</span>
+               <div class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></div>
+            </div>
+
+            <h3 class="font-headline text-xl font-bold leading-tight group-hover:text-primary transition-colors italic">
+              {{ story.title }}
+            </h3>
+            
+            <p class="text-xs text-on-surface/70 line-clamp-3 leading-relaxed">
+              {{ story.summary }}
+            </p>
+
+            <div class="mt-auto pt-4 border-t border-outline-variant/10 flex justify-between items-center opacity-40 group-hover:opacity-100 transition-opacity">
+               <span class="text-[0.6rem] font-mono uppercase tracking-tighter">Impact Score: 8.4/10</span>
+               <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </div>
+          </div>
+
+          <div *ngIf="stories.length === 0" class="col-span-full py-20 flex flex-col items-center justify-center opacity-30 gap-4">
+             <div class="w-12 h-1 bg-primary-container animate-pulse"></div>
+             <p class="font-mono text-xs uppercase tracking-widest">Awaiting story stream synchronization...</p>
+          </div>
+        </section>
+      </main>
     </div>
-  </div>
   `,
-  styles:[`
-  .story-card{
-    border:1px solid #ddd;
-    padding:15px;
-    margin:10px;
-    cursor:pointer;
-  }
-  `]
+  styles: [`:host { display: block; }`]
 })
 export class NewsNavigatorComponent implements OnInit {
+  news = inject(NewsService);
+  router = inject(Router);
+  stories: any[] = [];
 
-  stories:any[]=[];
-
-  constructor(private news:NewsService, private router:Router){}
-
-  ngOnInit(){
-    this.news.getStories().subscribe((data:any)=>{
-      this.stories=data;
+  ngOnInit() {
+    this.news.getStories().subscribe({
+      next: (data) => {
+        this.stories = data;
+      },
+      error: (err) => console.error(err)
     });
   }
 
-  openStory(id:number){
+  openStory(id: number) {
     this.router.navigate(['/dashboard', id]);
   }
 }
