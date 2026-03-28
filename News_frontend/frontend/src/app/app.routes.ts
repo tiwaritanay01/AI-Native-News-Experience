@@ -4,12 +4,22 @@ import { StoryArcComponent } from './components/story-arc/story-arc.component';
 import { NewsNavigatorComponent } from './components/news-navigator/news-navigator.component';
 import { VideoStudioComponent } from './components/video-studio/video-studio.component';
 import { VernacularComponent } from './components/vernacular/vernacular.component';
+import { LoginComponent } from './components/auth/login.component';
+import { RegisterComponent } from './components/auth/register.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'login',
     pathMatch: 'full'
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'register',
+    component: RegisterComponent
   },
   {
     path: 'dashboard',

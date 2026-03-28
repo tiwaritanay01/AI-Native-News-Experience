@@ -108,6 +108,41 @@ def translate_story(cluster_id: int, lang: Optional[str] = "Hindi"):
         "translated": translation_service.translate(summary, lang)
     }
 
+from app.db.user_db import register_user, login_user, get_user_persona
+
+@app.post("/register")
+def register(data: dict):
+    success = register_user(data["username"], data["password"], data["persona"])
+    return {"status": "success" if success else "error"}
+
+@app.post("/login")
+def login(data: dict):
+    persona = login_user(data["username"], data["password"])
+    if persona:
+        return {"status": "success", "persona": persona, "username": data["username"]}
+    return {"status": "error", "message": "Invalid credentials"}
+
+@app.get("/user/{username}/persona")
+def user_persona(username: str):
+    return {"persona": get_user_persona(username)}
+
+from app.agents.news_navigator_chat import get_navigator_chat_response
+
+@app.post("/navigator/chat")
+def navigator_chat(data: dict):
+    cluster_id = data.get("cluster_id")
+    question = data.get("question")
+    history = data.get("history", [])
+    response = get_navigator_chat_response(cluster_id, question, history)
+    return {"status": "success", "response": response}
+
+from app.agents.personalization_agent import get_personalized_feed
+
+@app.get("/personalized-feed/{username}")
+def personalized_feed(username: str):
+    persona = get_user_persona(username)
+    return get_personalized_feed(persona)
+
 @app.get("/api/market/ticker")
 def get_market_ticker():
     """Fetches real-time Bloomberg-style market tickers using yfinance."""

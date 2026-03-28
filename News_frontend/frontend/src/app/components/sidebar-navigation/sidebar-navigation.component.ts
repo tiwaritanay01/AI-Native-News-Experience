@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar-navigation',
@@ -46,6 +46,15 @@ import { RouterModule } from '@angular/router';
         </a>
       </nav>
 
+      <!-- Auth / Profile -->
+      <div class="mt-auto py-6 border-t border-primary-container/10 flex flex-col items-center gap-4">
+        <button (click)="logout()" 
+                class="flex flex-col items-center gap-1 w-full py-3 text-primary/40 hover:bg-red-500/5 hover:text-red-500 transition-all border-none bg-transparent cursor-pointer">
+          <span class="material-symbols-outlined">logout</span>
+          <span class="font-label text-[0.625rem] tracking-[0.05rem] uppercase text-center px-1">Exit</span>
+        </button>
+      </div>
+
       <!-- Version Branding -->
       <div class="pb-6 flex flex-col items-center gap-4">
         <span class="font-label text-[0.6875rem] tracking-[0.1em] text-primary-container/40 rotate-180 [writing-mode:vertical-lr]">AUREUM V2.0</span>
@@ -63,4 +72,11 @@ import { RouterModule } from '@angular/router';
     }
   `]
 })
-export class SidebarNavigationComponent {}
+export class SidebarNavigationComponent {
+  router = inject(Router);
+
+  logout() {
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
+  }
+}

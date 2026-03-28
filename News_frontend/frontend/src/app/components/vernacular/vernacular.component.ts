@@ -84,7 +84,7 @@ export class VernacularComponent {
   loading = false;
   translation: any = null;
   selectedLanguage = "Hindi";
-  languages = ["Hindi", "Marathi", "English", "French", "Spanish", "Japanese", "German", "Arabic"];
+  languages = ["Hindi", "Marathi", "Tamil", "Telugu", "Bengali", "Kannada", "Malayalam", "Gujarati"];
 
   selectLanguage(lang: string) {
     this.selectedLanguage = lang;

@@ -9,10 +9,19 @@ class TranslationService:
     def translate(self, text: str, target_lang: str) -> str:
         """
         Translates text to a vernacular language like Hindi, Marathi, 
-        Bengali, etc. using Gemini or the active LLM.
+        Bengali, etc. using Gemini or the active LLM with Cultural Adaptation.
         """
-        prompt = f"Translate the following news into {target_lang} while maintaining " \
-                 f"the professional and engaging tone:\n\n{text}"
+        prompt = f"""
+        Translate the following news text into {target_lang}.
+        
+        CRITICAL INSTRUCTIONS:
+        1. CULTURAL ADAPTATION: Do not translate literally. Use local idioms, business terminology (e.g., 'Samvat' context for markets if applicable), and simplify complex financial jargon into analogies understood by local audiences.
+        2. CONTEXT AWARENESS: Maintain the professional urgency of ET (Economic Times) but make it accessible.
+        3. FORMATTING: Use clear, readable paragraphs.
+        
+        Text to translate:
+        {text}
+        """
                  
         hw = get_hardware_type()
         
