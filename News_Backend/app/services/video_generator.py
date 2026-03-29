@@ -4,8 +4,9 @@ import requests
 import subprocess
 import asyncio
 import re
+import time
 from pathlib import Path
-from moviepy import ImageSequenceClip, AudioFileClip
+from moviepy import ImageSequenceClip, AudioFileClip, ColorClip, CompositeVideoClip
 import edge_tts
 from app.services.llm_service import generate_llm_response
 import urllib.parse
@@ -43,7 +44,6 @@ def generate_news_short(cluster_text: str, story_id: str) -> str:
 
     try:
         response = generate_llm_response(prompt)
-        # Robust JSON extraction
         json_match = re.search(r'\{.*\}', response, re.DOTALL)
         if json_match:
             data = json.loads(json_match.group(0))
@@ -53,9 +53,8 @@ def generate_news_short(cluster_text: str, story_id: str) -> str:
              print(f"⚠️ Warning: No JSON found in LLM response for story {story_id}. Using fallbacks.")
     except Exception as e:
         print(f"Failed to parse LLM response for video generator: {e}")
-        # Not raising, just using fallbacks to prevent 500 error
 
-    # 2. edge-tts (Python API to avoid subprocess issues)
+    # 2. edge-tts
     mp3_path = out_dir / f"{story_id}_voice.mp3"
     
     async def speak():
@@ -63,15 +62,16 @@ def generate_news_short(cluster_text: str, story_id: str) -> str:
         await communicate.save(str(mp3_path))
     
     try:
-        asyncio.run(speak())
+        if not mp3_path.exists():
+            asyncio.run(speak())
     except Exception as e:
         print(f"❌ edge-tts failed: {e}")
-        # Fallback empty audio or similar if needed, but we'll let moviepy handle it
     
     if not mp3_path.exists():
-        raise Exception("Audio generation failed.")
+        # Create a silent audio or fail gracefully
+        raise Exception("Audio generation failed and no fallback available.")
 
-    # 3. Pollinations API (Images)
+    # 3. Pollinations API (Images) with Resilient Fallbacks
     img_paths = []
     # Ensure we have 3 prompts
     prompts = prompts[:3]
@@ -79,32 +79,59 @@ def generate_news_short(cluster_text: str, story_id: str) -> str:
         prompts.append(f"Abstract digital background {len(prompts)+1}")
 
     for i, p in enumerate(prompts):
-        try:
-            encoded_prompt = urllib.parse.quote(p)
-            url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1280&height=720&nologo=true&seed={i}"
-            r = requests.get(url, timeout=30)
-            img_path = out_dir / f"{story_id}_img_{i}.jpg"
-            if r.status_code == 200:
-                with open(img_path, 'wb') as f:
-                    f.write(r.content)
-                img_paths.append(str(img_path))
-            else:
-                print(f"⚠️ Warning: Pollinations failed for prompt {i}: {r.status_code}")
-        except Exception as e:
-             print(f"⚠️ Warning: Image fetch error: {e}")
-            
-    if not img_paths:
-        raise Exception("No images could be fetched for the video.")
+        img_path = out_dir / f"{story_id}_img_{i}.jpg"
+        if img_path.exists():
+            img_paths.append(str(img_path))
+            continue
 
-    # 4. moviepy
+        success = False
+        # Try Pollinations with Retry
+        for attempt in range(2):
+            try:
+                encoded_prompt = urllib.parse.quote(p)
+                url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1280&height=720&nologo=true&seed={story_id}{i}"
+                r = requests.get(url, timeout=15)
+                if r.status_code == 200:
+                    with open(img_path, 'wb') as f:
+                        f.write(r.content)
+                    img_paths.append(str(img_path))
+                    success = True
+                    break
+                else:
+                    print(f"⚠️ Pollinations attempt {attempt+1} failed ({r.status_code})")
+                    time.sleep(1)
+            except Exception as e:
+                 print(f"⚠️ Pollinations error: {e}")
+                 time.sleep(1)
+        
+        if not success:
+            # Fallback to a reliable placeholder service if Pollinations is down
+            try:
+                placeholder_url = f"https://picsum.photos/seed/{story_id}{i}/1280/720"
+                r = requests.get(placeholder_url, timeout=10)
+                if r.status_code == 200:
+                    with open(img_path, 'wb') as f:
+                        f.write(r.content)
+                    img_paths.append(str(img_path))
+                    print(f"✅ Used Picsum placeholder for image {i}")
+                    success = True
+            except:
+                pass
+            
+    # 4. moviepy Assembly with Color Fallback
     try:
         audio = AudioFileClip(str(mp3_path))
         duration = audio.duration
         
-        # Assign equal duration for each image to match audio duration
-        img_duration = duration / len(img_paths)
-        
-        clip = ImageSequenceClip(img_paths, durations=[img_duration]*len(img_paths))
+        if img_paths:
+            # We have at least some images
+            img_duration = duration / len(img_paths)
+            clip = ImageSequenceClip(img_paths, durations=[img_duration]*len(img_paths))
+        else:
+            # NO images could be fetched (total API blackout) -> Use a stylized color background
+            print("⚠️ Total image failure. Using solid background fallback.")
+            clip = ColorClip(size=(1280, 720), color=(20, 20, 40), duration=duration)
+            
         clip = clip.with_audio(audio)
         
         # Save video
@@ -113,4 +140,5 @@ def generate_news_short(cluster_text: str, story_id: str) -> str:
         return f"/videos/{story_id}/{story_id}_explainer.mp4"
     except Exception as e:
         print(f"❌ moviepy assembly failed: {e}")
+        # Last resort: if it fails, don't return 500 if we can help it, but assembly failure is critical
         raise Exception(f"Video assembly failed: {str(e)}")
