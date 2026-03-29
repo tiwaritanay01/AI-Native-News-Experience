@@ -9,31 +9,25 @@ def analyze_story_impact(articles):
         context += article + "\n\n"
 
     prompt = f"""
-You are a financial news analyst.
+    You are an AI market intelligence analyst.
+    Evaluate the impact of the following news on key sectors.
+    
+    1. EXRACT SCORES (1-10): Evaluate impact for Stock Market, Economy, Banking, Commodities, and Geopolitics.
+    2. SUMMARIZE: Provide a 2-sentence sophisticated impact summary in the "raw" field.
 
-Based on the news articles below evaluate the impact on:
+    Return ONLY a JSON object:
+    {{
+      "stock_market": number,
+      "economy": number,
+      "banking": number,
+      "commodities": number,
+      "geopolitics": number,
+      "raw": "Sophisticated summary here."
+    }}
 
-Stock Market
-Economy
-Banking Sector
-Commodities
-Geopolitics
-
-Return a score from 1 to 10.
-
-Format JSON like this:
-
-{{
- "stock_market": number,
- "economy": number,
- "banking": number,
- "commodities": number,
- "geopolitics": number
-}}
-
-Articles:
-{context}
-"""
+    Articles:
+    {context}
+    """
 
     response = generate_llm_response(prompt)
 
