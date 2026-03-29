@@ -273,21 +273,24 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
       next: (story) => {
         this.topStory = story;
         this.clusterId = story.cluster_id;
-        
-        // Proactive synchronization of secondary intelligence
-        this.loadImpact();
-        this.loadOpinions();
-        this.loadTimeline();
-        
         this.cdr.detectChanges();
+
+        // Defer secondary loads to the NEXT macrotask to avoid NG0100
+        // ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(() => {
+          this.loadImpact();
+          this.loadOpinions();
+          this.loadTimeline();
+        }, 0);
       },
       error: (err) => {
         console.error('Critical: Core signal loss', err);
-        // Attempt recovery with default cluster
         this.clusterId = 0;
-        this.loadImpact();
-        this.loadOpinions();
-        this.loadTimeline();
+        setTimeout(() => {
+          this.loadImpact();
+          this.loadOpinions();
+          this.loadTimeline();
+        }, 0);
       }
     });
   }

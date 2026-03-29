@@ -1,10 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NewsService } from '../../services/news.service';
 import { Router } from '@angular/router';
 import { SidebarNavigationComponent } from '../sidebar-navigation/sidebar-navigation.component';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-news-navigator',
@@ -102,6 +102,11 @@ export class NewsNavigatorComponent implements OnInit {
   news = inject(NewsService);
   router = inject(Router);
   http = inject(HttpClient);
+  cdr = inject(ChangeDetectorRef);
+
+  // Expose the API base URL from NewsService so chat uses ngrok, not localhost
+  private get apiBase(): string { return (this.news as any).api; }
+  private get ngrokHeaders(): HttpHeaders { return (this.news as any).headers; }
 
   stories: any[] = [];
   showChat = false;
@@ -141,17 +146,24 @@ export class NewsNavigatorComponent implements OnInit {
     const question = this.currentQuestion;
     this.currentQuestion = '';
     this.chatLoading = true;
+    this.cdr.detectChanges();
 
-    this.http.post('http://localhost:8000/navigator/chat', {
-       cluster_id: this.activeStory?.cluster_id || 0,
+    // Use the same base URL as NewsService (supports ngrok tunnels)
+    this.http.post(`${this.apiBase}/navigator/chat`, {
+       cluster_id: this.activeStory?.cluster_id ?? 0,
        question: question,
-       history: this.chatHistory.slice(-5)
-    }).subscribe((res: any) => {
-       this.chatHistory.push({ role: 'assistant', content: res.response });
-       this.chatLoading = false;
-    }, err => {
-       this.chatLoading = false;
-       this.chatHistory.push({ role: 'assistant', content: "Error accessing Groq engine. Node unstable." });
+       history: this.chatHistory.slice(-6)
+    }, { headers: this.ngrokHeaders }).subscribe({
+       next: (res: any) => {
+         this.chatHistory.push({ role: 'assistant', content: res.response });
+         this.chatLoading = false;
+         this.cdr.detectChanges();
+       },
+       error: () => {
+         this.chatLoading = false;
+         this.chatHistory.push({ role: 'assistant', content: '⚠️ Node connection interrupted. Retrying routing tables...' });
+         this.cdr.detectChanges();
+       }
     });
   }
 }
