@@ -100,6 +100,7 @@ We use a separate resource account to run the high-performance AI backend in Goo
 ## ⚠️ Troubleshooting & Resilience
 *   **Rate Limits (429)**: To ensure UI stability, we implemented a **Mock-Fallback Layer**. If the Groq or Gemini APIs reach their token limits, the terminal automatically switches to high-quality simulated "Deep Intelligence" data based on the cluster's core themes.
 *   **API Conflicts**: Ensure that your `Ngrok URL` is correctly pasted and that no trailing slashes exist in the URL string.
+*   **indefinite buffer**: if a component goes on indefinite buffer and in network tab the api is already fetched without any errors then tap on the desired component on left side navigation panel once to completely load the component on the page
 
 ---
 
