@@ -164,3 +164,24 @@ def health_check():
         "hardware": get_hardware_type(),
         "version": "2.2"
     }
+
+@app.get("/api/test-gemini")
+def test_gemini():
+    """Health check specifically for the Gemini API connection."""
+    import os
+    import google.generativeai as genai
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if not gemini_key:
+        return {"status": "error", "message": "GEMINI_API_KEY is not set."}
+    
+    try:
+        genai.configure(api_key=gemini_key)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content("Ping. Reply with exactly 'Pong'.")
+        return {
+            "status": "success",
+            "model": "gemini-1.5-flash",
+            "response": response.text
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}

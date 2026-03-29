@@ -24,7 +24,7 @@ def initialize_engine(model_name: str = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"):
         try:
             print("💎 Probing for Gemini API...")
             genai.configure(api_key=gemini_key)
-            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            model = genai.GenerativeModel('gemini-1.5-flash')
             # Test prompt to ensure key is valid
             model.generate_content("ping")
             _engine = {"model": model}

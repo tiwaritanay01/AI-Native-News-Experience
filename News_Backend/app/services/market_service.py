@@ -22,8 +22,12 @@ class MarketService:
     def get_live_ticker(self):
         try:
             # Download data but explicitly handle empty/nan cases
-            data = yf.download(self.TICKERS, period="1d", interval="1m", group_by='ticker', progress=False)
-            
+            try:
+                data = yf.download(self.TICKERS, period="1d", interval="1m", group_by='ticker', progress=False)
+            except Exception as e:
+                print(f"❌ yfinance download error: {e}")
+                return []
+                
             ticker_list = []
             for t in self.TICKERS:
                 try:
@@ -37,7 +41,7 @@ class MarketService:
                     
                     # Ensure they aren't NaN using numpy check
                     if np.isnan(current_price) or np.isnan(prev_close):
-                         raise ValueError("Data point is NaN")
+                         continue
 
                     change = ((current_price - prev_close) / prev_close) * 100
                     
@@ -51,14 +55,13 @@ class MarketService:
                     # Fallback to a static or previous value if NaN found
                     continue
             
-            # If no data collected (e.g. weekend), return high-quality simulated data
             if not ticker_list:
-                return self._get_fallback_data()
+                return []
 
             return ticker_list
         except Exception as e:
-            print(f"❌ Market Data Sync Failed: {e}")
-            return self._get_fallback_data()
+            print(f"❌ Market Data Sync Failed completely: {e}")
+            return []
 
     def _get_fallback_data(self):
         return [

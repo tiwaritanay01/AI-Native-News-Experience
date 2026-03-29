@@ -1,5 +1,5 @@
 from app.services.llm_service import generate_llm_response
-
+import json
 
 def detect_contrarian_opinions(articles):
 

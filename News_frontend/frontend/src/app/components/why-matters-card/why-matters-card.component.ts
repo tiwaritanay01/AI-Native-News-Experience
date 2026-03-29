@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
     <div class="relative h-full flex flex-col">
       <div class="flex-1 overflow-y-auto no-scrollbar pr-2 min-h-[120px]">
         <p class="font-body text-xl text-primary-container/80 leading-relaxed whitespace-pre-wrap">
-          {{ getDisplayText() }}<span *ngIf="isGenerating" class="inline-block w-4 h-5 bg-secondary-container ml-1 animate-pulse align-middle"></span>
+          <span [innerHTML]="getParsedText()"></span><span *ngIf="isGenerating" class="inline-block w-4 h-5 bg-secondary-container ml-1 animate-pulse align-middle"></span>
         </p>
       </div>
     </div>
@@ -31,5 +31,16 @@ export class WhyMattersCardComponent {
     }
     if (this.relevance.summary) return this.relevance.summary;
     return this.isGenerating ? 'Processing JAX core...' : 'Decoding stream...';
+  }
+
+  getParsedText(): string {
+    let text = this.getDisplayText();
+    if (!text) return '';
+    
+    // Convert **bold** markdown to HTML <strong> tags
+    // Add styling classes directly to the strong tag since we are injecting HTML
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-on-surface font-semibold">$1</strong>');
+    
+    return text;
   }
 }
