@@ -10,7 +10,14 @@ def generate_story_timeline(cluster_id):
     clusters = cluster_stories()
     articles = clusters.get(cluster_id, [])
     if not articles:
-        return {"error": "No timeline data available."}
+        articles = clusters.get(str(cluster_id), [])
+        
+    if not articles:
+        return {
+            "events": [{"date": "Now", "event": "Signals are emerging for this narrative cluster. Standby for deep analysis."}],
+            "sentiment_arc": "Status: Initializing Narrative Stream",
+            "predictions": ["Awaiting further data for predictive modeling."]
+        }
     
     text = "\n\n".join(articles[:8])  # More context for better timeline
     

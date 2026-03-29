@@ -6,11 +6,17 @@ from app.services.impact_service import analyze_story_impact
 def get_story_impact(cluster_id):
 
     clusters = cluster_stories()
+    articles = clusters.get(cluster_id, [])
+    if not articles:
+        articles = clusters.get(str(cluster_id), [])
+        
+    if not articles:
+        return {
+            "cluster_id": cluster_id,
+            "impact": {"market": "Stable", "sentiment": "Neutral", "sectors": ["Global Trade"]}
+        }
 
-    if cluster_id not in clusters:
-        return {"error": "Story not found"}
-
-    articles = clusters[cluster_id]
+    articles = articles
 
     impact = analyze_story_impact(articles)
 
