@@ -154,3 +154,13 @@ def home():
         "message": "AI Native News API Online",
         "engines": ["TPU-v5e", "Gemini-Pro", "HuggingFace-Cinematic", "Vernacular-JAX"]
     }
+
+@app.get("/api/health")
+def health_check():
+    """Health check endpoint used by deployment scripts to confirm startup."""
+    from app.services.hardware_engine import get_hardware_type
+    return {
+        "status": "online",
+        "hardware": get_hardware_type(),
+        "version": "2.2"
+    }
