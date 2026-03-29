@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NewsService } from '../../services/news.service';
 
 @Component({
   selector: 'app-register',
@@ -67,6 +68,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class RegisterComponent {
   http = inject(HttpClient);
+  news = inject(NewsService);
   router = inject(Router);
   username = '';
   password = '';
@@ -79,11 +81,11 @@ export class RegisterComponent {
   ];
 
   register() {
-    this.http.post('http://localhost:8000/register', {
+    this.http.post(`${this.news.api}/register`, {
        username: this.username,
        password: this.password,
        persona: this.persona
-    }).subscribe((res: any) => {
+    }, { headers: this.news.headers }).subscribe((res: any) => {
       if (res.status === 'success') {
          this.router.navigate(['/login']);
       } else {

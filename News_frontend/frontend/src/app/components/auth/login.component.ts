@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NewsService } from '../../services/news.service';
 
 @Component({
   selector: 'app-login',
@@ -44,15 +45,16 @@ import { HttpClient } from '@angular/common/http';
 })
 export class LoginComponent {
   http = inject(HttpClient);
+  news = inject(NewsService);
   router = inject(Router);
   username = '';
   password = '';
 
   login() {
-    this.http.post('http://localhost:8000/login', {
+    this.http.post(`${this.news.api}/login`, {
        username: this.username,
        password: this.password
-    }).subscribe((res: any) => {
+    }, { headers: this.news.headers }).subscribe((res: any) => {
       if (res.status === 'success') {
          localStorage.setItem('user', JSON.stringify(res));
          this.router.navigate(['/dashboard']);

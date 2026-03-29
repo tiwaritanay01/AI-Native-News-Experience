@@ -8,9 +8,9 @@ import { of, Observable } from 'rxjs';
 })
 export class NewsService {
 
-  private api = 'https://hypernatural-phoebe-blowy.ngrok-free.dev';
+  public api = 'https://hypernatural-phoebe-blowy.ngrok-free.dev';
   
-  private headers = new HttpHeaders({
+  public headers = new HttpHeaders({
     'ngrok-skip-browser-warning': 'true'
   });
 
