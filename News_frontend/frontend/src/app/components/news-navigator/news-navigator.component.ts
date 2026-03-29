@@ -42,8 +42,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
               {{ story.title }}
             </h3>
             
-            <p class="text-xs text-on-surface/70 line-clamp-3 leading-relaxed first-letter:text-lg first-letter:font-headline first-letter:text-primary">
-              {{ story.summary }}
+            <p class="text-xs text-on-surface/70 line-clamp-3 leading-relaxed first-letter:text-lg first-letter:font-headline first-letter:text-primary" [innerHTML]="formatText(story.summary)">
             </p>
 
             <div class="mt-auto pt-6 border-t border-outline-variant/10 flex justify-between items-center bg-surface-container-lowest/50">
@@ -75,7 +74,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
                  [class.ml-auto]="msg.role === 'user'"
                  class="inline-block p-4 max-w-[90%] text-xs leading-relaxed transition-all">
               <span class="font-mono text-[0.55rem] uppercase block mb-1 opacity-50">{{ msg.role === 'user' ? 'Local_User' : 'Navigator_AI' }}</span>
-              {{ msg.content }}
+              <div [innerHTML]="formatText(msg.content)"></div>
             </div>
           </div>
           <div *ngIf="chatLoading" class="animate-pulse flex items-center gap-2 text-[0.6rem] font-mono text-primary/40 border border-primary/10 w-fit p-2">
@@ -165,5 +164,10 @@ export class NewsNavigatorComponent implements OnInit {
          this.cdr.detectChanges();
        }
     });
+  }
+
+  formatText(text: any): string {
+    if (!text) return '';
+    return text.toString().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   }
 }

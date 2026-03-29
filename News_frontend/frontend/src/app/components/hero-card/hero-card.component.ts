@@ -12,8 +12,7 @@ import { NewsService } from '../../services/news.service';
       <h1 class="font-headline text-5xl md:text-7xl font-extrabold italic text-on-surface leading-tight tracking-tighter mb-4 uppercase">
         {{ story?.title || 'Initializing AI Core...' }}
       </h1>
-      <p class="font-body text-xl text-primary-container/80 leading-relaxed max-w-3xl mb-8">
-        {{ story?.summary || 'Standardizing news clusters on TPU hardware...' }}
+      <p class="font-body text-xl text-primary-container/80 leading-relaxed max-w-3xl mb-8" [innerHTML]="formatText(story?.summary || 'Standardizing news clusters on TPU hardware...')">
       </p>
     </div>
 
@@ -37,5 +36,10 @@ export class HeroCardComponent implements OnInit {
   ngOnInit() {
     // Manually trigger detection if story is passed in late
     this.cdr.detectChanges();
+  }
+
+  formatText(text: string): string {
+    if (!text) return '';
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   }
 }

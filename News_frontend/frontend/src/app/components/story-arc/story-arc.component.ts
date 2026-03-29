@@ -35,8 +35,8 @@ import { CommonModule } from '@angular/common';
       <section class="space-y-6">
         <h3 class="text-[0.6rem] font-mono text-primary uppercase tracking-[0.3em] mb-4 border-b border-primary/10 pb-2 italic">Chronological Sequence</h3>
         
-        <div *ngIf="getEvents().length === 0" class="py-8 text-center text-on-surface/30 font-mono text-[0.6rem] uppercase tracking-widest animate-pulse">
-           Awaiting sequence stabilization...
+        <div *ngIf="getEvents().length === 0" class="py-8 text-center text-on-surface/30 font-mono text-[0.6rem] uppercase tracking-widest">
+           {{ errorMessage }}
         </div>
 
         <div *ngFor="let event of getEvents(); let i = index" class="flex gap-6 group relative">
@@ -92,9 +92,13 @@ import { CommonModule } from '@angular/common';
 })
 export class StoryArcComponent {
   @Input() timeline: any;
+  errorMessage = "Market data currently unavailable for this ticker";
 
   getEvents(): any[] {
     if (!this.timeline) return [];
+    if (this.timeline.loading) return [];
+    
+    // Explicitly set loading to false if we have data or error (handled by input usually, but reinforcing here)
     if (this.timeline.events) return this.timeline.events;
     // Fallback for old format
     if (Array.isArray(this.timeline)) return this.timeline;
