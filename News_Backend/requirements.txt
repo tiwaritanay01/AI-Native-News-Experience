@@ -6,6 +6,8 @@ nest-asyncio
 pydantic
 pydantic-settings
 orjson
+opentelemetry-api==1.38.0
+opentelemetry-sdk==1.38.0
 
 # ─── AI / ML (Hybrid: works on TPU, GPU, and CPU) ────
 transformers
@@ -29,7 +31,6 @@ PyYAML
 tenacity
 tqdm
 gitpython
-zipp
 
 # ─── New Services ──────────────────────────────────────
 google-generativeai
