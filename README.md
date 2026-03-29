@@ -39,6 +39,20 @@ Turn any complex story into a 30s video short:
 
 ---
 
+## ⚡ Hardware Scaling & Compute Profile
+
+The **Aureum Terminal** is architected to scale dynamically based on the available hardware:
+
+| Feature | Primary Compute | Why? |
+| :--- | :--- | :--- |
+| **Navigator Chat / SSE Briefing** | **Any (API-Driven)** | These features are offloaded to **Groq LPU Clusters**, requiring zero local GPU/TPU power. |
+| **Story Arc Tracking** | **CPU / TPU-Optimized** | Uses lightweight JAX-based interpolation; runs fast on CPU, but scales instantly on **TPU v5e**. |
+| **Neural Clustering (HDBSCAN)** | **TPU / GPU Required** | Semantic clustering of 100+ articles requires high-density matrix math; **TPU-Agnostic JAX** is used for "Heavy Lifting" here. |
+| **Video Production Pipeline** | **GPU Recommended** | `MoviePy` uses multi-core CPU by default, but utilizes **NVIDIA T4/A100** for hardware-accelerated encoding and generative frame synthesis. |
+| **Market Engine & Dashboard UI** | **Standard CPU** | Highly optimized Angular state and Python-regex routing; runs flawlessly on any consumer-grade CPU. |
+
+---
+
 ## 🏗 Technical Stack
 
 | Layer | Technology |
