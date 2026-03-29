@@ -38,7 +38,8 @@ groq
 
 # ─── NOTE: Hardware-specific packages ─────────────────
 # These are installed conditionally in the Colab script:
-#   TPU: jax[tpu], torch_xla
-#   GPU: (torch with CUDA is auto-detected)
-#   Neither is needed in requirements.txt since Colab
 #   handles the runtime-specific installs.
+
+# ─── Video Pipeline ───────────────────────────────────
+edge-tts
+moviepy

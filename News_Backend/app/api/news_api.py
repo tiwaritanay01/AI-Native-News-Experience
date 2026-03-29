@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 
@@ -21,8 +23,12 @@ from app.api.story_routes import router as story_router
 from app.services.video_service import video_service
 from app.services.translation_service import translation_service
 from app.services.market_service import market_service
+from app.services.video_generator import generate_news_short
+
+os.makedirs("videos", exist_ok=True)
 
 app = FastAPI()
+app.mount("/videos", StaticFiles(directory="videos"), name="videos")
 
 app.add_middleware(
     CORSMiddleware,
@@ -88,13 +94,33 @@ def story_dashboard(cluster_id: int):
 
 # ─── Cinematic & Vernacular Engines ────────────────────────────────
 
-@app.get("/api/story/{cluster_id}/video")
-def get_story_video(cluster_id: int):
-    """Generates cinematic video frames/metadata using Hugging Face."""
-    briefing = get_story_briefing(cluster_id)
-    # The briefing agent returns a dict, we extract summary
-    summary = briefing.get("summary", "A breaking news story.") if isinstance(briefing, dict) else str(briefing)
-    return video_service.generate_video_frames(summary)
+@app.post("/api/story/{cluster_id}/video")
+def create_story_video(cluster_id: int):
+    """Generates a zero-compute AI explainer video for the given story."""
+    try:
+        # Fetch cluster text first
+        from app.services.story_cluster import cluster_stories
+        clusters = cluster_stories()
+        stories = clusters.get(str(cluster_id), [])
+        if not stories:
+            # Fallback if cluster_id is int and dictionary uses int keys
+            stories = clusters.get(cluster_id, [])
+            
+        cluster_text = " ".join(stories) if stories else get_story_briefing(cluster_id)
+        if hasattr(cluster_text, "get") and "summary" in cluster_text:
+            cluster_text = cluster_text["summary"]
+            
+        # Run generation
+        video_url = generate_news_short(str(cluster_text), str(cluster_id))
+        
+        return {
+            "status": "success",
+            "video_url": video_url
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/story/{cluster_id}/translate")
 def translate_story(cluster_id: int, lang: Optional[str] = "Hindi"):
