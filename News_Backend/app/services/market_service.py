@@ -1,8 +1,6 @@
 import yfinance as yf
 import json
 import numpy as np
-from app.services.impact_service import analyze_story_impact as analyze_impact
-from app.services.news_briefing import get_briefing
 
 class MarketService:
     """
