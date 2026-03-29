@@ -262,18 +262,51 @@ async def stream_tokens(prompt: str, max_new_tokens: int = 256):
 
 # ─── Mock Fallback Generators ─────────────────────────────────────
 def _generate_mock_response(prompt: str) -> str:
-    # If the system expects JSON, return a valid JSON Mock
-    if "JSON" in prompt:
-         return json.dumps({
-            "headline": "Aureum Signal Sync: Stable Intelligence Flow",
-            "summary": "The intelligent news clusters have been successfully localized. Market volatility remains within calculated parameters.",
-            "why_matters": ["Neural stabilization achieved", "Cross-sector data validated"],
-            "sentiment": "NEUTRAL",
-            "sectors": ["Global Tech", "Macro Finance"],
-            "radar": { "bullish": 0.6, "bearish": 0.1, "interest": 0.9 }
+    prompt_upper = prompt.upper()
+    
+    # CASE: JSON output expected (Timeline, Intelligence, etc.)
+    if "JSON" in prompt_upper:
+        # Detect Timeline prompt
+        if "TIMELINE" in prompt_upper or "CHRONOLOGICAL" in prompt_upper:
+            return json.dumps({
+                "events": [
+                    {"date": "2 Days Ago", "event": "Initial market signal detected in Asian sectors."},
+                    {"date": "Yesterday", "event": "Major stakeholders confirm strategy pivot."},
+                    {"date": "6 Hours Ago", "event": "Public statement released; high volatility observed."},
+                    {"date": "Now", "event": "Story reaching peak complexity; analysts evaluating impact."}
+                ],
+                "sentiment_arc": "The narrative shifted from cautious optimism to high-risk instability as details merged.",
+                "predictions": [
+                    "Regulators likely to intervene by next fiscal quarter.",
+                    "Secondary market ripple effects expected in logistics.",
+                    "Consumer confidence may dip temporarily before stabilizing."
+                ]
+            })
+            
+        # Detect Dashboard/Intelligence prompt
+        return json.dumps({
+            "headline": "Aureum Intelligence: System-Wide Narrative Synthesis",
+            "summary": "Our neural clusters have identified a stabilizing trend in the current news cycle. Market indicators suggest a 12% rise in sentiment following recent policy adjustments.",
+            "why_matters": [
+                "Direct impact on Q3 fiscal projections",
+                "Shifts standard industry benchmarks for the first time in years",
+                "Triggers automated hedging protocols across several sectors"
+            ],
+            "sentiment": "NEUTRAL-BULLISH",
+            "sectors": ["Global Logistics", "Fintech Architecture", "Renewable Energy"],
+            "radar": { "bullish": 0.75, "bearish": 0.15, "interest": 0.95 }
         })
     
-    return "Aureum Signal: Standardizing news story arcs. Neural clusters active."
+    # CASE: Plain text output expected (Opinions, Chat, etc.)
+    
+    # Detect Contrarian Opinions
+    if "CONTRAST" in prompt_upper or "OPPOSING" in prompt_upper or "VIEWPOINT" in prompt_upper:
+        return """Viewpoint A: The bull case suggests that the recent technological integration will lead to unprecedented efficiency and market dominance.
+
+Viewpoint B: However, skeptics argue that the high cost of implementation and potential regulatory hurdles pose significant risks to long-term stability."""
+
+    # Default Chat/Narration
+    return "Aureum Signal: The story arc is currently expanding. We are tracking a 14% increase in narrative momentum centered around strategic shifts in the sector. Further intelligence is being synthesized by our JAX-TPU clusters."
 
 
 async def _stream_mock_tokens(prompt: str):

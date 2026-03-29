@@ -27,5 +27,19 @@ Articles:
 """
 
     response = generate_llm_response(prompt)
+    
+    # Try to extract the two viewpoints cleanly
+    # Assuming the LLM follows the format "Viewpoint A: ... Viewpoint B: ..."
+    views = []
+    if "Viewpoint A:" in response and "Viewpoint B:" in response:
+        part_b = response.split("Viewpoint B:")[1].strip()
+        part_a = response.split("Viewpoint B:")[0].split("Viewpoint A:")[1].strip()
+        views = [part_a, part_b]
+    else:
+        # Fallback split
+        views = [s.strip() for s in response.split("\n\n") if s.strip()][:2]
 
-    return response
+    return {
+        "status": "success",
+        "opinions": views
+    }
