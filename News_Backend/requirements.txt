@@ -33,7 +33,7 @@ zipp
 
 # ─── New Services ──────────────────────────────────────
 google-generativeai
-yfinance
+finnhub-python
 groq
 
 # ─── NOTE: Hardware-specific packages ─────────────────
