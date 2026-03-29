@@ -39,6 +39,18 @@ Turn any complex story into a 30s video short:
 
 ---
 
+## 📺 Project Demos & Presentation
+
+The following folder contains full working prototype videos showcasing the **Zero-Latency Groq Engine** and the **Resilient Mock-Fallback layer**:
+
+🔗 **[Aureum Terminal: Working Model & Final Pitch (Google Drive)]([https://drive.google.com/drive/folders/1yO7nk_QvUwVKaCTQUwbTKS1AeyyclYKT?usp=sharing])**
+
+### **Context for the Demo Videos:**
+*   **Final Prototype**: Showcases the complete, high-speed end-to-end user journey across the News Intelligence Terminal.
+*   **Groq API / Resiliency Showcase**: Our latest videos intentionally demonstrate the application's behavior when **Groq API Rate Limits (429)** are hit. You will notice the Terminal seamlessly switching to its internal **High-Fidelity Mock Engine**, ensuring the judges can always see the UI and data flow even during cloud-service outages.
+
+---
+
 ## ⚡ Hardware Scaling & Compute Profile
 
 The **Aureum Terminal** is architected to scale dynamically based on the available hardware:
@@ -71,7 +83,7 @@ The **Aureum Terminal** is architected to scale dynamically based on the availab
 ### **Step 1: The Backend (Cloud Engine)**
 We use a separate resource account to run the high-performance AI backend in Google Colab.
 
-1.  Open the [Colab Backend Script](https://colab.research.google.com/drive/1_vK7N8BvD2O3D5_I7fH5Z5G_9xYc6v8J).
+1.  Open the [Colab Backend Script](https://colab.research.google.com/drive/1_vK7N8BvD2O3D5_I7fH5Z5G_9xYc6v8J),(https://drive.google.com/drive/folders/1svnsxXQxfppd5negECw1cWTitLadNNQB?usp=sharing),(https://colab.research.google.com/drive/11ILMT4YXMabAtNHXOwwGpHm-RzGWxzkQ?usp=sharing). (try any of 3 links)
 2.  Enable **Secrets** (Key icon 🔑):
     *   `GROQ_API_KEY`, `FINNHUB_API_KEY`, `NGROK_AUTH_TOKEN`.
 3.  Click **Runtime -> Run All**.
