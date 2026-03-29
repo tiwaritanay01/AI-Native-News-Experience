@@ -1,7 +1,7 @@
 from app.services.story_cluster import cluster_stories
 from app.services.story_title import generate_story_title
 from app.services.entity_extractor import extract_entities
-from app.services.impact_analysis import analyze_impact
+from app.services.impact_service import analyze_story_impact as analyze_impact
 
 def get_all_stories():
 

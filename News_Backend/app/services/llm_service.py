@@ -6,11 +6,23 @@ TPU / GPU / CPU / Mock transparently.
 from app.services.hardware_engine import generate_response, get_hardware_type
 
 
+_initialized = False
+
+def _ensure_initialized():
+    global _initialized
+    if not _initialized:
+        from app.services.hardware_engine import initialize_engine
+        initialize_engine()
+        _initialized = True
+
 def generate_llm_response(prompt: str, model: str = "llama3") -> str:
     """
     Single entry point for all synchronous agent LLM calls.
-    Backwards-compatible with every service that previously imported this.
+    Ensures the hardware engine is initialized exactly once.
     """
+    _ensure_initialized()
     hw = get_hardware_type()
-    print(f"🚀 [{hw}] Inference triggered for prompt: {prompt[:50]}...")
+    # Mask prompt for cleaner logs
+    summary = prompt.strip()[:60].replace('\n', ' ')
+    print(f"🚀 [{hw}] Inference triggered for pattern: {summary}...")
     return generate_response(prompt)

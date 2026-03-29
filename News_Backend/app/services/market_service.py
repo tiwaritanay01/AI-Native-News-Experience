@@ -1,6 +1,8 @@
 import yfinance as yf
 import json
 import numpy as np
+from app.services.impact_service import analyze_story_impact as analyze_impact
+from app.services.news_briefing import get_briefing
 
 class MarketService:
     """
@@ -9,12 +11,12 @@ class MarketService:
     Handles NaN values to ensure JSON compliance.
     """
     
-    TICKERS = ["^GSPC", "^IXIC", "BTC-USD", "GC=F", "TSLA", "NVDA"]
+    TICKERS = ["^GSPC", "^IXIC", "BTC-USD", "GLD", "TSLA", "NVDA"]
     MAP = {
         "^GSPC": "S&P 500",
         "^IXIC": "NASDAQ", 
         "BTC-USD": "BTC/USD",
-        "GC=F": "GOLD",
+        "GLD": "GOLD",
         "TSLA": "TSLA",
         "NVDA": "NVDA"
     }

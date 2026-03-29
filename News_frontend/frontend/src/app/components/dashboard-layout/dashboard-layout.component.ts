@@ -270,12 +270,24 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
 
   loadTopStory() {
     this.news.getStoryOfDay().subscribe({
-      next: (res) => {
-        this.topStory = res;
+      next: (story) => {
+        this.topStory = story;
+        this.clusterId = story.cluster_id;
+        
+        // Proactive synchronization of secondary intelligence
+        this.loadImpact();
+        this.loadOpinions();
+        this.loadTimeline();
+        
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error("Top Story Load Failed:", err);
+        console.error('Critical: Core signal loss', err);
+        // Attempt recovery with default cluster
+        this.clusterId = 0;
+        this.loadImpact();
+        this.loadOpinions();
+        this.loadTimeline();
       }
     });
   }
