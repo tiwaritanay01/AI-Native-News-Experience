@@ -80,7 +80,7 @@ export class NewsService {
 
   getStoryVideo(clusterId: number): Observable<any> {
     if (!this.isBrowser()) return of(null);
-    return this.http.get<any>(`${this.api}/api/story/${clusterId}/video`, { headers: this.headers });
+    return this.http.post<any>(`${this.api}/api/story/${clusterId}/video`, {}, { headers: this.headers });
   }
 
   getStoryTranslation(clusterId: number, lang: string): Observable<any> {
